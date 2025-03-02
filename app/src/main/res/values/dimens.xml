@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="dimens_button_text">3dp</dimen>
+    <dimen name="button_radius">16dp</dimen>
+    <dimen name="button_text_size">22sp</dimen>
+    <dimen name="button_margin">8dp</dimen>
+    <dimen name="element_height">61dp</dimen>
+    <dimen name="panel_header_height">56dp</dimen>
+    <dimen name="panel_header_padding_top">14dp</dimen>
+    <dimen name="common_padding">16dp</dimen>
+    <dimen name="header_text_size">22sp</dimen>
+    <dimen name="common_padding_end">12dp</dimen>
+    <dimen name="tab_bar_text_size">12sp</dimen>
+</resources>
