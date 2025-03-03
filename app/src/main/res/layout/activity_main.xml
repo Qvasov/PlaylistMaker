@@ -44,8 +44,9 @@
             android:backgroundTint="@color/yp_white"
             android:text="@string/search"
             android:textColor="@color/yp_black"
-
             android:textSize="@dimen/button_text_size"
+            android:textAllCaps="false"
+
             app:cornerRadius="@dimen/button_radius"
             app:icon="@drawable/search"
             app:iconGravity="textStart"
@@ -56,14 +57,14 @@
             android:id="@+id/library"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:layout_marginTop="@dimen/button_margin"
-            android:layout_marginBottom="@dimen/button_margin"
+            android:layout_marginVertical="@dimen/button_margin"
             android:layout_weight="1"
             android:backgroundTint="@color/yp_white"
             android:text="@string/library"
             android:textColor="@color/yp_black"
-
             android:textSize="@dimen/button_text_size"
+            android:textAllCaps="false"
+
             app:cornerRadius="@dimen/button_radius"
             app:icon="@drawable/library"
             app:iconGravity="textStart"
@@ -79,8 +80,9 @@
             android:backgroundTint="@color/yp_white"
             android:text="@string/settings"
             android:textColor="@color/yp_black"
-
             android:textSize="@dimen/button_text_size"
+            android:textAllCaps="false"
+
             app:cornerRadius="@dimen/button_radius"
             app:icon="@drawable/settings"
             app:iconGravity="textStart"

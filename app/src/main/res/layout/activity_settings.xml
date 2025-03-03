@@ -41,7 +41,8 @@
                 android:layout_height="@dimen/element_height"
                 android:paddingStart="@dimen/common_padding"
                 android:text="@string/night"
-                android:textColor="@color/yp_black"/>
+                android:textColor="@color/yp_black"
+                android:textSize="@dimen/common_text_size"/>
 
             <FrameLayout
                 android:layout_width="match_parent"
@@ -54,7 +55,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
                     android:text="@string/share"
-                    android:textColor="@color/yp_black" />
+                    android:textColor="@color/yp_black"
+                    android:textSize="@dimen/common_text_size"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -74,7 +76,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
                     android:text="@string/support"
-                    android:textColor="@color/yp_black" />
+                    android:textColor="@color/yp_black"
+                    android:textSize="@dimen/common_text_size"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
@@ -94,7 +97,8 @@
                     android:layout_height="wrap_content"
                     android:layout_gravity="start|center"
                     android:text="@string/user_agreement"
-                    android:textColor="@color/yp_black" />
+                    android:textColor="@color/yp_black"
+                    android:textSize="@dimen/common_text_size"/>
 
                 <ImageView
                     android:layout_width="wrap_content"
