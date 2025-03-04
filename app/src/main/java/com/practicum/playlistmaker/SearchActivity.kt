@@ -15,6 +15,11 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class SearchActivity : AppCompatActivity() {
+    companion object {
+        var message : String = ""
+        const val EDITTEXT_TEXT = "EDITTEXT_TEXT"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
@@ -23,10 +28,15 @@ class SearchActivity : AppCompatActivity() {
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
 
+        if (savedInstanceState != null) {
+            onSaveInstanceState(savedInstanceState)
+        }
+
         clearButton.setOnClickListener {
             searchEditText.setText("")
             val inputMethodManager = getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
+            clearButton.clearFocus()
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -35,10 +45,10 @@ class SearchActivity : AppCompatActivity() {
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 Toast.makeText(this@SearchActivity, "Поиск чего-то", Toast.LENGTH_SHORT).show()
                 clearButton.visibility = clearButtonVisibility(s)
+                message = s.toString()
             }
 
-            override fun afterTextChanged(s: Editable?) {
-            }
+            override fun afterTextChanged(s: Editable?) {}
         }
         searchEditText.addTextChangedListener(simpleTextWatcher)
 
@@ -55,5 +65,18 @@ class SearchActivity : AppCompatActivity() {
         } else {
             View.VISIBLE
         }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+
+        outState.putString(EDITTEXT_TEXT, message)
+    }
+
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+
+        val searchEditText = findViewById<EditText>(R.id.search_edit_text)
+        searchEditText.setText(savedInstanceState.getString(EDITTEXT_TEXT, message))
     }
 }
