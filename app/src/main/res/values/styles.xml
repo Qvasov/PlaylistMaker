@@ -1,20 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <style name="headerTitleLayoutStyle">
+    <style name="headerLayoutStyle">
         <item name="android:layout_width">match_parent</item>
         <item name="android:layout_height">@dimen/panel_header_height</item>
-        <item name="android:paddingTop">@dimen/panel_header_padding_top</item>
-        <item name="android:paddingBottom">@dimen/common_padding</item>
-        <item name="android:paddingStart">@dimen/common_padding</item>
-        <item name="android:layout_marginBottom">24dp</item>
+        <item name="android:orientation">horizontal</item>
     </style>
     <style name="headerTextStyle">
         <item name="android:layout_width">wrap_content</item>
         <item name="android:layout_height">wrap_content</item>
-        <item name="android:layout_gravity">start</item>
+        <item name="android:layout_marginLeft">@dimen/common_margin_horizontal</item>
+        <item name="android:layout_gravity">center</item>
         <item name="android:textSize">@dimen/header_text_size</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textFontWeight">@string/text_font_weight_medium</item>
+        <item name="android:textFontWeight">@integer/text_font_weight_medium</item>
+    </style>
+    <style name="headerButtonStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_gravity">center</item>
     </style>
     
     <style name="mainActivityButtonStyle">
@@ -22,11 +25,12 @@
         <item name="android:layout_height">match_parent</item>
         <item name="android:layout_weight">1</item>
         <item name="android:layout_marginBottom">@dimen/button_margin</item>
+        <item name="android:layout_marginHorizontal">@dimen/common_margin_horizontal</item>
         <item name="android:backgroundTint">@color/yp_white</item>
         <item name="android:textColor">@color/yp_black</item>
         <item name="android:textSize">@dimen/button_text_size</item>
         <item name="android:fontFamily">@font/ys_display_medium</item>
-        <item name="android:textFontWeight">@string/text_font_weight_medium</item>
+        <item name="android:textFontWeight">@integer/text_font_weight_medium</item>
         <item name="android:textAllCaps">false</item>
         <item name="cornerRadius">@dimen/button_radius</item>
         <item name="iconGravity">textStart</item>
@@ -37,9 +41,8 @@
     
     <style name="settingsActivityLayoutElementStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/element_height</item>
-        <item name="android:paddingStart">@dimen/common_padding</item>
-        <item name="android:paddingEnd">@dimen/common_padding</item>
+        <item name="android:layout_height">@dimen/settings_element_height</item>
+        <item name="android:layout_marginHorizontal">@dimen/common_margin_horizontal</item>
     </style>
     <style name="settingsActivityTextElementStyle">
         <item name="android:layout_width">wrap_content</item>

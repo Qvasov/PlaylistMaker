@@ -7,6 +7,7 @@
     <style name="Theme.PlaylistMaker" parent="Base.Theme.PlaylistMaker">
         <item name="android:fontFamily">@font/ys_display_regular</item>
         <item name="android:textColor">@color/yp_black</item>
-        <item name="android:textFontWeight">@string/text_font_weight_regular</item>
+        <item name="android:textFontWeight">@integer/text_font_weight_regular</item>
+        <item name="android:textCursorDrawable">@color/yp_blue</item>
     </style>
 </resources>

@@ -8,8 +8,6 @@
     <string name="night">Темная тема</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
-    <string name="text_font_weight_medium">500</string>
-    <string name="text_font_weight_regular">400</string>
 
     <string name="course_url">https://practicum.yandex.ru</string>
     <string name="user_agreement_url">https://yandex.ru/legal/practicum_offer/</string>

@@ -8,17 +8,17 @@
     android:background="@color/mainActivityBackgroundColor"
     android:orientation="vertical">
 
-    <FrameLayout style="@style/headerTitleLayoutStyle">
+    <LinearLayout style="@style/headerLayoutStyle">
         <TextView style="@style/headerTextStyle"
             android:text="@string/header_title"
             android:textColor="@color/yp_white" />
-    </FrameLayout>
+    </LinearLayout>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:paddingHorizontal="@dimen/common_padding">
+        android:layout_marginTop="@dimen/margin_from_header">
 
         <Button
             android:id="@+id/search"
