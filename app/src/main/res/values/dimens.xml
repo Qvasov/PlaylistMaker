@@ -3,7 +3,7 @@
     <dimen name="dimens_button_text">3dp</dimen>
     <dimen name="button_radius">16dp</dimen>
     <dimen name="button_text_size">22sp</dimen>
-    <dimen name="button_margin">8dp</dimen>
+    <dimen name="button_margin">16dp</dimen>
     <dimen name="element_height">61dp</dimen>
     <dimen name="panel_header_height">56dp</dimen>
     <dimen name="panel_header_padding_top">14dp</dimen>
