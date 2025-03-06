@@ -7,8 +7,8 @@ import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import android.widget.FrameLayout
 import android.widget.ImageView
-import android.widget.Toast
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
@@ -16,20 +16,26 @@ import androidx.core.view.WindowInsetsCompat
 
 class SearchActivity : AppCompatActivity() {
     companion object {
-        var message : String = ""
         const val EDITTEXT_TEXT = "EDITTEXT_TEXT"
     }
+
+    private var message : String = ""
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
 
+        val backButton = findViewById<FrameLayout>(R.id.back_button)
         val searchEditText = findViewById<EditText>(R.id.search_edit_text)
         val clearButton = findViewById<ImageView>(R.id.clearIcon)
 
         if (savedInstanceState != null) {
             onSaveInstanceState(savedInstanceState)
+        }
+
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
         }
 
         clearButton.setOnClickListener {
@@ -43,7 +49,6 @@ class SearchActivity : AppCompatActivity() {
             override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                Toast.makeText(this@SearchActivity, "Поиск чего-то", Toast.LENGTH_SHORT).show()
                 clearButton.visibility = clearButtonVisibility(s)
                 message = s.toString()
             }
@@ -60,11 +65,7 @@ class SearchActivity : AppCompatActivity() {
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {
-        return if (s.isNullOrEmpty()) {
-            View.GONE
-        } else {
-            View.VISIBLE
-        }
+        return if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

@@ -10,16 +10,27 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 
 class SettingsActivity : AppCompatActivity() {
+    companion object {
+        const val COURSE_URL = "https://practicum.yandex.ru"
+        const val USER_AGREEMENT_URL = "https://yandex.ru/legal/practicum_offer/"
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
+        val backButton = findViewById<FrameLayout>(R.id.back_button)
         val shareButton = findViewById<FrameLayout>(R.id.share)
+
+        backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
         shareButton.setOnClickListener {
             val shareIntent = Intent(Intent.ACTION_SEND)
             shareIntent.type = "text/plain"
-            shareIntent.putExtra(Intent.EXTRA_TEXT, getString(R.string.course_url))
+            shareIntent.putExtra(Intent.EXTRA_TEXT, COURSE_URL)
             startActivity(Intent.createChooser(shareIntent, null))
         }
 
@@ -35,7 +46,7 @@ class SettingsActivity : AppCompatActivity() {
 
         val userAgreementButton = findViewById<FrameLayout>(R.id.user_agreement)
         userAgreementButton.setOnClickListener {
-            val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(getString(R.string.user_agreement_url)))
+            val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(USER_AGREEMENT_URL))
             startActivity(shareIntent)
         }
 
