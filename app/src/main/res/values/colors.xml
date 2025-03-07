@@ -14,6 +14,7 @@
     <color name="editTextBackgroundColor">@color/yp_edit_text_grey</color>
     <color name="editTextTextColorHint">@color/yp_hint_grey</color>
     <color name="editTextDrawableTint">@color/yp_hint_grey</color>
+    <color name="trackViewTextColor">@color/yp_grey</color>
 
 
 </resources>
