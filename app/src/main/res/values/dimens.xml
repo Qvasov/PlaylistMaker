@@ -3,13 +3,22 @@
     <dimen name="dimens_button_text">3dp</dimen>
     <dimen name="button_radius">16dp</dimen>
     <dimen name="button_text_size">22sp</dimen>
-    <dimen name="button_margin">8dp</dimen>
-    <dimen name="element_height">61dp</dimen>
+    <dimen name="button_margin">16dp</dimen>
+    <dimen name="settings_element_height">61dp</dimen>
     <dimen name="panel_header_height">56dp</dimen>
-    <dimen name="panel_header_padding_top">14dp</dimen>
-    <dimen name="common_padding">16dp</dimen>
+    <dimen name="common_margin_horizontal">16dp</dimen>
+    <dimen name="header_text_margin_horizontal">12dp</dimen>
     <dimen name="header_text_size">22sp</dimen>
-    <dimen name="common_padding_end">12dp</dimen>
     <dimen name="tab_bar_text_size">12sp</dimen>
     <dimen name="common_text_size">16sp</dimen>
+    <dimen name="margin_from_header">24dp</dimen>
+    <dimen name="zero_dp">0dp</dimen>
+    <dimen name="header_element_layout_height">48dp</dimen>
+    <dimen name="search_element_height">52dp</dimen>
+    <dimen name="edit_text_height">36dp</dimen>
+    <dimen name="edit_text_hint_text_size">16dp</dimen>
+    <dimen name="edit_text_hint_icon_padding_edge">13dp</dimen>
+    <dimen name="edit_text_hint_icon_padding">8dp</dimen>
+    <dimen name="edit_text_corner_radius">8dp</dimen>
+    <dimen name="edit_text_clear_padding_horizontal">14dp</dimen>
 </resources>

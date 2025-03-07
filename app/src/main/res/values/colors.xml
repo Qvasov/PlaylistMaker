@@ -1,9 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <color name="black">#FF000000</color>
     <color name="yp_white">#FFFFFFFF</color>
     <color name="yp_black">#1A1B22</color>
     <color name="yp_blue">#3772E7</color>
     <color name="yp_grey">#AEAFB4</color>
     <color name="yp_light_grey">#E6E8EB</color>
+    <color name="yp_hint_grey">#818C99</color>
+    <color name="yp_edit_text_grey">#E6E8EB</color>
+
+    <color name="mainActivityBackgroundColor">@color/yp_blue</color>
+    <color name="activityBackgroundColor">@color/yp_white</color>
+    <color name="activityTextColor">@color/yp_black</color>
+    <color name="editTextBackgroundColor">@color/yp_edit_text_grey</color>
+    <color name="editTextTextColorHint">@color/yp_hint_grey</color>
+    <color name="editTextDrawableTint">@color/yp_hint_grey</color>
+
+
 </resources>

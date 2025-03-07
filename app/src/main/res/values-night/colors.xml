@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="mainActivityBackgroundColor">@color/yp_black</color>
+    <color name="activityBackgroundColor">@color/yp_black</color>
+    <color name="activityTextColor">@color/yp_white</color>
+    <color name="editTextBackgroundColor">@color/yp_white</color>
+    <color name="editTextTextColorHint">@color/yp_black</color>
+    <color name="editTextDrawableTint">@color/yp_black</color>
+</resources>
