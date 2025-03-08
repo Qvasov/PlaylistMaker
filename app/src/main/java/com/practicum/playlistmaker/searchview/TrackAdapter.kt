@@ -9,6 +9,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.api.Track
+import java.text.SimpleDateFormat
+import java.util.Locale
 
 class TrackAdapter(
     private val trackList: List<Track>
@@ -42,7 +45,8 @@ class TrackAdapter(
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
             trackViewTextArtisName.text = track.artistName
-            trackViewTextTrackTime.text = track.trackTime
+            trackViewTextTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault())
+                .format(track.trackTime).toString()
         }
     }
 }

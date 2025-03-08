@@ -15,6 +15,8 @@
     <color name="editTextTextColorHint">@color/yp_hint_grey</color>
     <color name="editTextDrawableTint">@color/yp_hint_grey</color>
     <color name="trackViewTextColor">@color/yp_grey</color>
+    <color name="buttonBackgroundTintColor">@color/yp_black</color>
+    <color name="buttonTextColor">@color/yp_white</color>
 
 
 </resources>
