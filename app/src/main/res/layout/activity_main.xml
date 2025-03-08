@@ -18,7 +18,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:orientation="vertical"
-        android:layout_marginTop="@dimen/margin_from_header">
+        android:layout_marginTop="@dimen/margin_from_header"
+        android:layout_marginBottom="12dp">
 
         <Button
             android:id="@+id/search"
@@ -34,8 +35,7 @@
         <Button android:id="@+id/settings"
             style="@style/mainActivityButtonStyle"
             android:text="@string/settings"
-            app:icon="@drawable/settings"
-            android:layout_marginBottom="28dp"/>
+            app:icon="@drawable/settings"/>
     </LinearLayout>
 
 

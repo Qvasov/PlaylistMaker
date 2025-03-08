@@ -22,4 +22,5 @@
     <dimen name="edit_text_corner_radius">8dp</dimen>
     <dimen name="edit_text_clear_padding_horizontal">14dp</dimen>
     <dimen name="track_view_image_size">45dp</dimen>
+    <dimen name="alertTextSize">19sp</dimen>
 </resources>
