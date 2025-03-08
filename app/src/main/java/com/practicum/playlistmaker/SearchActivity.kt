@@ -21,30 +21,22 @@ import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.practicum.playlistmaker.api.Track
-import com.practicum.playlistmaker.api.iTunesApi
 import com.practicum.playlistmaker.api.iTunesApiResponse
 import com.practicum.playlistmaker.searchview.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
 class SearchActivity : AppCompatActivity() {
     companion object {
         const val EDITTEXT_TEXT = "EDITTEXT_TEXT"
     }
 
+    private val iTunesApiController = RetrofitService.createITunesController()
+
     private var message: String = ""
     private val trackList = ArrayList<Track>()
     private val trackListAdapter = TrackAdapter(trackList)
-
-    private val iTunesBaseUrl = "https://itunes.apple.com"
-    private val iTunesControllerFactory = Retrofit.Builder()
-        .baseUrl(iTunesBaseUrl)
-        .addConverterFactory(GsonConverterFactory.create())
-        .build()
-    private val iTunesApiController = iTunesControllerFactory.create(iTunesApi::class.java)
 
     private lateinit var backButton: FrameLayout
     private lateinit var searchEditText: EditText
@@ -86,6 +78,7 @@ class SearchActivity : AppCompatActivity() {
             clearButton.clearFocus()
             trackList.clear()
             trackListAdapter.notifyDataSetChanged()
+            showAlert(false)
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -93,6 +86,14 @@ class SearchActivity : AppCompatActivity() {
 
             override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
                 clearButton.visibility = clearButtonVisibility(s)
+                if (s.isNullOrEmpty()) {
+                    if (trackList.isEmpty()) {
+                        showAlert(false)
+                    } else {
+                        trackList.clear()
+                        trackListAdapter.notifyDataSetChanged()
+                    }
+                }
                 message = s.toString()
             }
 
@@ -111,7 +112,7 @@ class SearchActivity : AppCompatActivity() {
 
         refreshButton.setOnClickListener { search(searchEditText.text.toString()) }
 
-        alert(false)
+        showAlert(false)
 
         ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.search)) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
@@ -148,15 +149,15 @@ class SearchActivity : AppCompatActivity() {
                             trackList.clear()
                             trackList.addAll(response.body()?.results!!)
                             trackListAdapter.notifyDataSetChanged()
-                            alert(false)
+                            showAlert(false)
                         } else {
-                            alert(true,
+                            showAlert(true,
                                 getString(R.string.not_found),
                                 getDrawable(R.drawable.not_found)
                             )
                         }
                     } else {
-                        alert(true,
+                        showAlert(true,
                             getString(R.string.connection_lost)
                                     + System.lineSeparator()
                                     + System.lineSeparator()
@@ -168,7 +169,7 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<iTunesApiResponse>, t: Throwable) {
-                    alert(true,
+                    showAlert(true,
                         getString(R.string.connection_lost)
                                 + System.lineSeparator()
                                 + System.lineSeparator()
@@ -179,7 +180,7 @@ class SearchActivity : AppCompatActivity() {
             })
     }
 
-    private fun alert(
+    private fun showAlert(
         show: Boolean,
         message: String? = null,
         drawable: Drawable? = null,

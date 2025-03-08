@@ -39,8 +39,8 @@ class TrackAdapter(
         fun bind(track: Track) {
             Glide.with(itemView)
                 .load(track.artworkUrl100)
-                .placeholder(R.drawable.barsik)
-                .centerCrop()
+                .placeholder(R.drawable.album_place_holder)
+                .centerInside()
                 .transform(RoundedCorners(2))
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
