@@ -39,13 +39,13 @@
         <item name="android:textAllCaps">false</item>
         <item name="cornerRadius">@dimen/button_radius</item>
         <item name="iconGravity">textStart</item>
-        <item name="iconPadding">@dimen/dimens_button_text</item>
+        <item name="iconPadding">@dimen/dimens_button_text_padding</item>
         <item name="iconTint">@color/yp_black</item>
     </style>
     
     <style name="settingsActivityLayoutElementStyle">
         <item name="android:layout_width">match_parent</item>
-        <item name="android:layout_height">@dimen/settings_element_height</item>
+        <item name="android:layout_height">@dimen/element_height</item>
         <item name="android:layout_marginHorizontal">@dimen/common_margin_horizontal</item>
     </style>
     <style name="settingsActivityTextElementStyle">
@@ -77,5 +77,12 @@
         <item name="android:layout_gravity">center</item>
         <item name="android:gravity">center</item>
         <item name="android:textSize">@dimen/tab_bar_text_size</item>
+    </style>
+
+    <style name="trackViewTextStyle">
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:textColor">@color/trackViewTextColor</item>
+        <item name="android:textSize">11sp</item>
     </style>
 </resources>
