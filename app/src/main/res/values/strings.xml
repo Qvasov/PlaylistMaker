@@ -8,8 +8,13 @@
     <string name="night">Темная тема</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
+    <string name="not_found">Ничего не нашлось</string>
+    <string name="connection_lost">Проблемы со связью</string>
+    <string name="fail_download">Загрузка не удалась. Проверьте подключение к интернету</string>
 
     <string name="emailTo">Kvasovmi@yandex.ru</string>
     <string name="subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
+    <string name="refresh">Обновить</string>
+
 </resources>
