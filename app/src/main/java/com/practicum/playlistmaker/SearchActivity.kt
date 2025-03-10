@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Context
+import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
 import android.text.Editable
@@ -22,6 +23,7 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.practicum.playlistmaker.api.Track
 import com.practicum.playlistmaker.api.iTunesApiResponse
+import com.practicum.playlistmaker.searchview.SearchHistoryService
 import com.practicum.playlistmaker.searchview.TrackAdapter
 import retrofit2.Call
 import retrofit2.Callback
@@ -30,13 +32,18 @@ import retrofit2.Response
 class SearchActivity : AppCompatActivity() {
     companion object {
         const val EDITTEXT_TEXT = "EDITTEXT_TEXT"
+        private const val SEARCH_ACTIVITY = "search_activity"
     }
 
     private val iTunesApiController = RetrofitService.createITunesController()
+    private lateinit var sharedPreferences: SharedPreferences
+    private lateinit var searchHistoryService: SearchHistoryService
 
     private var message: String = ""
     private val trackList = ArrayList<Track>()
-    private val trackListAdapter = TrackAdapter(trackList)
+
+    private lateinit var trackListAdapter: TrackAdapter
+    private lateinit var trackListHistoryAdapter: TrackAdapter
 
     private lateinit var backButton: FrameLayout
     private lateinit var searchEditText: EditText
@@ -46,12 +53,22 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var alertTextView: TextView
     private lateinit var alertImageView: ImageView
     private lateinit var refreshButton: Button
+    private lateinit var historyAlertText: TextView
+    private lateinit var historyClearButton: Button
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContentView(R.layout.activity_search)
+
+        sharedPreferences = getSharedPreferences(SEARCH_ACTIVITY, MODE_PRIVATE)
+        searchHistoryService = SearchHistoryService(sharedPreferences)
+
+        trackListAdapter = TrackAdapter(trackList, searchHistoryService)
+        trackListHistoryAdapter = TrackAdapter(
+            searchHistoryService.getTrackHistory(), searchHistoryService
+        )
 
         backButton = findViewById(R.id.back_button)
         searchEditText = findViewById(R.id.search_edit_text)
@@ -61,6 +78,8 @@ class SearchActivity : AppCompatActivity() {
         alertTextView = findViewById(R.id.alertText)
         alertImageView = findViewById(R.id.alertImage)
         refreshButton = findViewById(R.id.refreshButton)
+        historyAlertText = findViewById(R.id.historyAlertText)
+        historyClearButton = findViewById(R.id.historyClearButton)
 
         if (savedInstanceState != null) {
             onSaveInstanceState(savedInstanceState)
@@ -75,10 +94,11 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager =
                 getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
-            clearButton.clearFocus()
+            searchEditText.clearFocus()
             trackList.clear()
             trackListAdapter.notifyDataSetChanged()
             showAlert(false)
+            historyAlert(true)
         }
 
         val simpleTextWatcher = object : TextWatcher {
@@ -89,12 +109,21 @@ class SearchActivity : AppCompatActivity() {
                 if (s.isNullOrEmpty()) {
                     if (trackList.isEmpty()) {
                         showAlert(false)
+                        historyAlert(true)
                     } else {
                         trackList.clear()
-                        trackListAdapter.notifyDataSetChanged()
+                        if (searchHistoryService.getTrackHistory().isNotEmpty()) {
+                            historyAlert(true)
+                        }
                     }
                 }
                 message = s.toString()
+
+                if (searchEditText.hasFocus() && s.isNullOrEmpty()) {
+                    historyAlert(true)
+                } else {
+                    historyAlert(false)
+                }
             }
 
             override fun afterTextChanged(s: Editable?) {}
@@ -107,10 +136,21 @@ class SearchActivity : AppCompatActivity() {
             }
             false
         }
+        searchEditText.requestFocus()
+        searchEditText.setOnFocusChangeListener { view, hasFocus ->
+            if (hasFocus && searchEditText.text.isEmpty()) {
+                historyAlert(true)
+            }
+        }
 
-        trackListView.adapter = trackListAdapter
+        historyAlert(true)
 
         refreshButton.setOnClickListener { search(searchEditText.text.toString()) }
+
+        historyClearButton.setOnClickListener {
+            searchHistoryService.clearTrackHistory()
+            historyAlert(true)
+        }
 
         showAlert(false)
 
@@ -151,13 +191,21 @@ class SearchActivity : AppCompatActivity() {
                             trackListAdapter.notifyDataSetChanged()
                             showAlert(false)
                         } else {
-                            showAlert(true,
+                            showAlert(
+                                true,
                                 getString(R.string.not_found),
                                 getDrawable(R.drawable.not_found)
                             )
                         }
+                    } else if (response.code() == 404) {
+                        showAlert(
+                            true,
+                            getString(R.string.not_found),
+                            getDrawable(R.drawable.not_found)
+                        )
                     } else {
-                        showAlert(true,
+                        showAlert(
+                            true,
                             getString(R.string.connection_lost)
                                     + System.lineSeparator()
                                     + System.lineSeparator()
@@ -169,13 +217,15 @@ class SearchActivity : AppCompatActivity() {
                 }
 
                 override fun onFailure(call: Call<iTunesApiResponse>, t: Throwable) {
-                    showAlert(true,
+                    showAlert(
+                        true,
                         getString(R.string.connection_lost)
                                 + System.lineSeparator()
                                 + System.lineSeparator()
                                 + getString(R.string.fail_download),
                         getDrawable(R.drawable.connection_lost),
-                        true)
+                        true
+                    )
                 }
             })
     }
@@ -224,5 +274,19 @@ class SearchActivity : AppCompatActivity() {
         } else {
             refreshButton.visibility = View.GONE
         }
+    }
+
+    private fun historyAlert(show: Boolean) {
+        if (show && searchHistoryService.getTrackHistory().isNotEmpty()) {
+            historyAlertText.visibility = View.VISIBLE
+            historyClearButton.visibility = View.VISIBLE
+            trackListView.adapter =
+                TrackAdapter(searchHistoryService.getTrackHistory(), searchHistoryService)
+        } else {
+            historyAlertText.visibility = View.GONE
+            historyClearButton.visibility = View.GONE
+            trackListView.adapter = trackListAdapter
+        }
+        trackListHistoryAdapter.notifyDataSetChanged()
     }
 }
