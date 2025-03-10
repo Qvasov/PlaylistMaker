@@ -7,6 +7,9 @@
     <color name="yp_light_grey">#E6E8EB</color>
     <color name="yp_hint_grey">#818C99</color>
     <color name="yp_edit_text_grey">#E6E8EB</color>
+    <color name="yp_background_grey">#401A1B22</color>
+    <color name="yp_background_white">#40FFFFFF</color>
+    <color name="yp_transparent">#00FFFFFF</color>
 
     <color name="mainActivityBackgroundColor">@color/yp_blue</color>
     <color name="activityBackgroundColor">@color/yp_white</color>
@@ -17,6 +20,7 @@
     <color name="trackViewTextColor">@color/yp_grey</color>
     <color name="buttonBackgroundTintColor">@color/yp_black</color>
     <color name="buttonTextColor">@color/yp_white</color>
+    <color name="playListBackgroundButtonColor">@color/yp_background_grey</color>
 
 
 </resources>

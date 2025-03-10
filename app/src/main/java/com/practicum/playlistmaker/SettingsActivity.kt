@@ -29,7 +29,7 @@ class SettingsActivity : AppCompatActivity() {
 
         sharedPreferences = getSharedPreferences(App.PREFERENCES, MODE_PRIVATE)
         nightSwitcher = findViewById(R.id.night)
-        backButton = findViewById(R.id.back_button)
+        backButton = findViewById(R.id.backButton)
         shareButton = findViewById(R.id.share)
 
         nightSwitcher.isChecked = (applicationContext as App).darkTheme
