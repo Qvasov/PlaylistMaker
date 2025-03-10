@@ -7,14 +7,15 @@ import androidx.appcompat.app.AppCompatDelegate
 
 class App : Application() {
     companion object {
-        val NIGHT_THEME = "night_theme"
+        const val PREFERENCES = "preferences"
+        const val NIGHT_THEME = "night_theme"
     }
     var darkTheme = false
 
     override fun onCreate() {
         super.onCreate()
 
-        val sharedPrefs = getSharedPreferences(NIGHT_THEME, MODE_PRIVATE)
+        val sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
         val nightTheme = sharedPrefs.getString(NIGHT_THEME, null)
 
         if (nightTheme == null) {

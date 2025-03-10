@@ -14,7 +14,8 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class TrackAdapter(
-    private val trackList: List<Track>
+    private val trackList: List<Track>,
+    private val searchHistoryService: SearchHistoryService
 ) : RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
@@ -24,6 +25,9 @@ class TrackAdapter(
 
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
         holder.bind(trackList[position])
+        holder.itemView.setOnClickListener {
+            searchHistoryService.addTrackToTrackHistory(trackList[position])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -32,9 +36,12 @@ class TrackAdapter(
 
     class TrackHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         private val trackViewImage = itemView.findViewById<ImageView>(R.id.trackViewImage)
-        private val trackViewTextTrackName = itemView.findViewById<TextView>(R.id.trackViewTextTrackName)
-        private val trackViewTextArtisName = itemView.findViewById<TextView>(R.id.trackViewTextArtisName)
-        private val trackViewTextTrackTime = itemView.findViewById<TextView>(R.id.trackViewTextTrackTime)
+        private val trackViewTextTrackName =
+            itemView.findViewById<TextView>(R.id.trackViewTextTrackName)
+        private val trackViewTextArtisName =
+            itemView.findViewById<TextView>(R.id.trackViewTextArtisName)
+        private val trackViewTextTrackTime =
+            itemView.findViewById<TextView>(R.id.trackViewTextTrackTime)
 
         fun bind(track: Track) {
             Glide.with(itemView)

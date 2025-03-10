@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker
 
 import android.content.Intent
+import android.content.SharedPreferences
 import android.net.Uri
 import android.os.Bundle
 import android.widget.FrameLayout
@@ -16,6 +17,7 @@ class SettingsActivity : AppCompatActivity() {
         const val USER_AGREEMENT_URL = "https://yandex.ru/legal/practicum_offer/"
     }
 
+    private lateinit var sharedPreferences: SharedPreferences
     private lateinit var nightSwitcher: Switch
     private lateinit var backButton: FrameLayout
     private lateinit var shareButton: FrameLayout
@@ -25,16 +27,15 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
+        sharedPreferences = getSharedPreferences(App.PREFERENCES, MODE_PRIVATE)
         nightSwitcher = findViewById(R.id.night)
         backButton = findViewById(R.id.back_button)
         shareButton = findViewById(R.id.share)
 
-        val sharedPreference = getSharedPreferences(App.NIGHT_THEME, MODE_PRIVATE)
-
         nightSwitcher.isChecked = (applicationContext as App).darkTheme
         nightSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
-            sharedPreference.edit()
+            sharedPreferences.edit()
                 .putString(App.NIGHT_THEME, (applicationContext as App).darkTheme.toString())
                 .apply()
         }
