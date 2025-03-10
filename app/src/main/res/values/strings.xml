@@ -16,5 +16,7 @@
     <string name="subject">Сообщение разработчикам и разработчицам приложения Playlist Maker</string>
     <string name="text">Спасибо разработчикам и разработчицам за крутое приложение!</string>
     <string name="refresh">Обновить</string>
+    <string name="clear_history">Очистить историю</string>
+    <string name="you_searched">Вы искали</string>
 
 </resources>
