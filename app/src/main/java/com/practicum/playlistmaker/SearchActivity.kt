@@ -70,7 +70,7 @@ class SearchActivity : AppCompatActivity() {
             searchHistoryService.getTrackHistory(), searchHistoryService
         )
 
-        backButton = findViewById(R.id.back_button)
+        backButton = findViewById(R.id.backButton)
         searchEditText = findViewById(R.id.search_edit_text)
         clearButton = findViewById(R.id.clearIcon)
         trackListView = findViewById(R.id.trackList)

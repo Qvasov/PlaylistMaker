@@ -10,7 +10,7 @@
     <LinearLayout style="@style/headerLayoutStyle">
 
         <FrameLayout
-            android:id="@+id/back_button"
+            android:id="@+id/backButton"
             style="@style/headerButtonLayoutStyle">
 
             <ImageView

@@ -1,5 +1,6 @@
 package com.practicum.playlistmaker.searchview
 
+import android.content.Intent
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -8,15 +9,17 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
+import com.practicum.playlistmaker.PlayerActivity
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.api.Track
-import java.text.SimpleDateFormat
-import java.util.Locale
 
 class TrackAdapter(
     private val trackList: List<Track>,
-    private val searchHistoryService: SearchHistoryService
+    private val searchHistoryService: SearchHistoryService,
 ) : RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
+
+    private val gson = Gson()
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
@@ -27,6 +30,9 @@ class TrackAdapter(
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
             searchHistoryService.addTrackToTrackHistory(trackList[position])
+            val playerIntent = Intent(holder.itemView.context, PlayerActivity::class.java)
+            playerIntent.putExtra(PlayerActivity.TRACK, gson.toJson(trackList[position]))
+            holder.itemView.context.startActivity(playerIntent)
         }
     }
 
@@ -52,8 +58,7 @@ class TrackAdapter(
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
             trackViewTextArtisName.text = track.artistName
-            trackViewTextTrackTime.text = SimpleDateFormat("mm:ss", Locale.getDefault())
-                .format(track.trackTime).toString()
+            trackViewTextTrackTime.text = track.getSimpleTrackTime()
         }
     }
 }

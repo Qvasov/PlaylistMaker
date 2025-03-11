@@ -9,4 +9,6 @@
     <color name="trackViewTextColor">@color/yp_white</color>
     <color name="buttonBackgroundTintColor">@color/yp_white</color>
     <color name="buttonTextColor">@color/yp_black</color>
+    <color name="playListBackgroundButtonColor">@color/yp_background_white</color>
+
 </resources>
