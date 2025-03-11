@@ -64,7 +64,7 @@ class PlayerActivity : AppCompatActivity() {
         playTime.text = START_TIME
         trackTime.text = track.getSimpleTrackTime()
         collectionName.text = track.collectionName
-        releaseDate.text = track.releaseDate
+        releaseDate.text = track.getReleaseYear()
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
 
