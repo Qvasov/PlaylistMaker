@@ -100,19 +100,20 @@
                 android:layout_marginEnd="55dp"
                 android:background="@drawable/round_button"
                 android:src="@drawable/add_button"
-                app:layout_constraintBottom_toBottomOf="@id/playButton"
+                app:layout_constraintBottom_toBottomOf="@id/playPauseButton"
                 app:layout_constraintDimensionRatio="h,1:1"
-                app:layout_constraintEnd_toStartOf="@+id/playButton"
-                app:layout_constraintTop_toTopOf="@id/playButton" />
+                app:layout_constraintEnd_toStartOf="@+id/playPauseButton"
+                app:layout_constraintTop_toTopOf="@id/playPauseButton" />
 
             <ImageButton
-                android:id="@+id/playButton"
+                android:id="@+id/playPauseButton"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="30dp"
                 android:background="@color/activityBackgroundColor"
                 android:backgroundTint="@color/yp_transparent"
                 android:src="@drawable/play_button"
+                android:enabled="false"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintTop_toBottomOf="@+id/artistName" />
@@ -124,10 +125,10 @@
                 android:layout_marginStart="55dp"
                 android:background="@drawable/round_button"
                 android:src="@drawable/like_button"
-                app:layout_constraintBottom_toBottomOf="@id/playButton"
+                app:layout_constraintBottom_toBottomOf="@id/playPauseButton"
                 app:layout_constraintDimensionRatio="h,1:1"
-                app:layout_constraintStart_toEndOf="@+id/playButton"
-                app:layout_constraintTop_toTopOf="@id/playButton" />
+                app:layout_constraintStart_toEndOf="@+id/playPauseButton"
+                app:layout_constraintTop_toTopOf="@id/playPauseButton" />
 
             <TextView
                 android:id="@+id/playTime"
@@ -141,7 +142,7 @@
                 app:layout_constrainedWidth="true"
                 app:layout_constraintEnd_toStartOf="@+id/rightBorder"
                 app:layout_constraintStart_toEndOf="@id/leftBorder"
-                app:layout_constraintTop_toBottomOf="@+id/playButton"
+                app:layout_constraintTop_toBottomOf="@+id/playPauseButton"
                 tools:text="00:00" />
 
             <TextView
