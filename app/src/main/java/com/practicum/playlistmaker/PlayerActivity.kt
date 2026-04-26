@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation
+package com.practicum.playlistmaker
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -13,8 +13,7 @@ import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.api.Track
 import kotlinx.coroutines.Runnable
 import java.text.SimpleDateFormat
 import java.util.Locale
@@ -80,7 +79,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         Glide.with(this)
-            .load(track.artworkUrl100)
+            .load(track.getCoverArtwork())
             .placeholder(R.drawable.album_place_holder)
             .fitCenter()
             .transform(RoundedCorners(8))
@@ -88,9 +87,9 @@ class PlayerActivity : AppCompatActivity() {
         trackName.text = track.trackName
         artistName.text = track.artistName
         playTime.text = START_TIME
-        trackTime.text = track.trackTime
+        trackTime.text = track.getSimpleTrackTime()
         collectionName.text = track.collectionName
-        releaseDate.text = track.releaseDate
+        releaseDate.text = track.getReleaseYear()
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
 

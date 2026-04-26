@@ -1,6 +1,5 @@
-package com.practicum.playlistmaker.data.network
+package com.practicum.playlistmaker.api
 
-import com.practicum.playlistmaker.data.dto.iTunesApiResponse
 import retrofit2.Call
 import retrofit2.http.GET
 import retrofit2.http.Query

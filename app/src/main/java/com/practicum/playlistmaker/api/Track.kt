@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.data.dto
+package com.practicum.playlistmaker.api
 
 import com.google.gson.annotations.SerializedName
 import java.text.SimpleDateFormat
@@ -7,7 +7,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.util.Locale
 
-data class TrackDto(
+data class Track(
     val trackId: Int,
     val trackName: String,
     val artistName: String,
