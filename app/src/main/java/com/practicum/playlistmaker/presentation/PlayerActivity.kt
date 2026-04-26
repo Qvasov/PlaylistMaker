@@ -23,11 +23,12 @@ class PlayerActivity : AppCompatActivity() {
     companion object {
         const val TRACK = "TRACK"
         private const val START_TIME = "00:00"
-
         private const val STATE_DEFAULT = 0
+
         private const val STATE_PREPARED = 1
         private const val STATE_PLAYING = 2
         private const val STATE_PAUSED = 3
+        private const val TIMER_DELAY = 350L
     }
 
     private val gson = Gson()
@@ -162,7 +163,7 @@ class PlayerActivity : AppCompatActivity() {
                 ).format(mediaPlayer.currentPosition)
 
                 playTime.text = elapsedTime.toString()
-                handler?.postDelayed(this, 350)
+                handler?.postDelayed(this, TIMER_DELAY)
             }
         }
     }
