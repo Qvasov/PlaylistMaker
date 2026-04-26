@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.presentation
+package com.practicum.playlistmaker.searchview
 
 import android.content.Intent
 import android.os.Handler
@@ -12,9 +12,9 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
+import com.practicum.playlistmaker.PlayerActivity
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.searchview.SearchHistoryService
+import com.practicum.playlistmaker.api.Track
 
 class TrackAdapter(
     private val trackList: List<Track>,
@@ -66,7 +66,7 @@ class TrackAdapter(
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
             trackViewTextArtisName.text = track.artistName
-            trackViewTextTrackTime.text = track.trackTime
+            trackViewTextTrackTime.text = track.getSimpleTrackTime()
         }
     }
 
