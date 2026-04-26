@@ -21,6 +21,9 @@ class TrackAdapter(
     private val searchHistoryService: SearchHistoryService,
 ) : RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
 
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    }
 
     private val gson = Gson()
 
@@ -77,9 +80,5 @@ class TrackAdapter(
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
-    }
-
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }
