@@ -1,9 +1,10 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
+import android.os.Handler
+import android.os.Looper
 import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
@@ -14,6 +15,7 @@ import android.widget.EditText
 import android.widget.FrameLayout
 import android.widget.ImageView
 import android.widget.LinearLayout
+import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
@@ -21,10 +23,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.practicum.playlistmaker.api.Track
-import com.practicum.playlistmaker.api.iTunesApiResponse
-import com.practicum.playlistmaker.searchview.SearchHistoryService
-import com.practicum.playlistmaker.searchview.TrackAdapter
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.data.dto.iTunesApiResponse
+import com.practicum.playlistmaker.data.searchview.SearchHistoryService
+import com.practicum.playlistmaker.domain.api.TracksInteractor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -33,11 +37,14 @@ class SearchActivity : AppCompatActivity() {
     companion object {
         const val EDITTEXT_TEXT = "EDITTEXT_TEXT"
         private const val SEARCH_ACTIVITY = "search_activity"
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val iTunesApiController = RetrofitService.createITunesController()
+    private val trackInteractor = Creator.provideTracksInteractor()
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var searchHistoryService: SearchHistoryService
+    private val handler = Handler(Looper.getMainLooper())
+    private val searchRequest = Runnable {search(searchEditText.text.toString())}
 
     private var message: String = ""
     private val trackList = ArrayList<Track>()
@@ -55,6 +62,7 @@ class SearchActivity : AppCompatActivity() {
     private lateinit var refreshButton: Button
     private lateinit var historyAlertText: TextView
     private lateinit var historyClearButton: Button
+    private lateinit var progressBar: ProgressBar
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -80,6 +88,7 @@ class SearchActivity : AppCompatActivity() {
         refreshButton = findViewById(R.id.refreshButton)
         historyAlertText = findViewById(R.id.historyAlertText)
         historyClearButton = findViewById(R.id.historyClearButton)
+        progressBar = findViewById(R.id.progressBar)
 
         if (savedInstanceState != null) {
             onSaveInstanceState(savedInstanceState)
@@ -92,7 +101,7 @@ class SearchActivity : AppCompatActivity() {
         clearButton.setOnClickListener {
             searchEditText.setText("")
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
             searchEditText.clearFocus()
             trackList.clear()
@@ -123,6 +132,7 @@ class SearchActivity : AppCompatActivity() {
                     historyAlert(true)
                 } else {
                     historyAlert(false)
+                    searchDebounce()
                 }
             }
 
@@ -131,6 +141,7 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.addTextChangedListener(simpleTextWatcher)
         searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
+                handler.removeCallbacks(searchRequest)
                 search(searchEditText.text.toString())
                 true
             }
@@ -145,7 +156,9 @@ class SearchActivity : AppCompatActivity() {
 
         historyAlert(true)
 
-        refreshButton.setOnClickListener { search(searchEditText.text.toString()) }
+        refreshButton.setOnClickListener {
+            handler.removeCallbacks(searchRequest)
+            search(searchEditText.text.toString()) }
 
         historyClearButton.setOnClickListener {
             searchHistoryService.clearTrackHistory()
@@ -177,47 +190,34 @@ class SearchActivity : AppCompatActivity() {
         searchEditText.setText(savedInstanceState.getString(EDITTEXT_TEXT, message))
     }
 
-    private fun search(term: String) {
-        iTunesApiController.search(term)
-            .enqueue(object : Callback<iTunesApiResponse> {
-                override fun onResponse(
-                    call: Call<iTunesApiResponse>,
-                    response: Response<iTunesApiResponse>
-                ) {
-                    if (response.code() == 200) {
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            trackList.clear()
-                            trackList.addAll(response.body()?.results!!)
-                            trackListAdapter.notifyDataSetChanged()
-                            showAlert(false)
-                        } else {
-                            showAlert(
-                                true,
-                                getString(R.string.not_found),
-                                getDrawable(R.drawable.not_found)
-                            )
-                        }
-                    } else if (response.code() == 404) {
-                        showAlert(
-                            true,
-                            getString(R.string.not_found),
-                            getDrawable(R.drawable.not_found)
-                        )
-                    } else {
-                        showAlert(
-                            true,
-                            getString(R.string.connection_lost)
-                                    + System.lineSeparator()
-                                    + System.lineSeparator()
-                                    + getString(R.string.fail_download),
-                            getDrawable(R.drawable.connection_lost),
-                            true
-                        )
-                    }
-                }
+    private fun searchDebounce() {
+        handler.removeCallbacks(searchRequest)
+        handler.postDelayed(searchRequest, SEARCH_DEBOUNCE_DELAY)
+    }
 
-                override fun onFailure(call: Call<iTunesApiResponse>, t: Throwable) {
-                    showAlert(
+    private fun search(term: String) {
+        historyAlert(false)
+        showAlert(false)
+        trackListView.visibility = View.GONE
+        progressBar.visibility = View.VISIBLE
+
+        trackInteractor.search(term, object : TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>?) {
+                handler.post { progressBar.visibility = View.GONE }
+                if (foundTracks?.isNotEmpty() == true) {
+                    handler.post { trackListView.visibility = View.VISIBLE }
+                    trackList.clear()
+                    trackList.addAll(foundTracks)
+                    handler.post { trackListAdapter.notifyDataSetChanged()}
+                    showAlert(false)
+                } else if (foundTracks?.isEmpty() == true) {
+                    handler.post { showAlert(
+                        true,
+                        getString(R.string.not_found),
+                        getDrawable(R.drawable.not_found)
+                    )}
+                } else {
+                    handler.post { showAlert(
                         true,
                         getString(R.string.connection_lost)
                                 + System.lineSeparator()
@@ -225,9 +225,10 @@ class SearchActivity : AppCompatActivity() {
                                 + getString(R.string.fail_download),
                         getDrawable(R.drawable.connection_lost),
                         true
-                    )
+                    )}
                 }
-            })
+            }
+        })
     }
 
     private fun showAlert(

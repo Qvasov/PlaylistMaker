@@ -24,4 +24,5 @@
     <dimen name="track_view_image_size">45dp</dimen>
     <dimen name="alertTextSize">19sp</dimen>
     <dimen name="fab_margin">16dp</dimen>
+    <dimen name="progress_bar_margin_top">140dp</dimen>
 </resources>
