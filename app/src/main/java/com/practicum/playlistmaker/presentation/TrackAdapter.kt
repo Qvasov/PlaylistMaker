@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker.searchview
+package com.practicum.playlistmaker.presentation
 
 import android.content.Intent
 import android.os.Handler
@@ -12,18 +12,15 @@ import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
-import com.practicum.playlistmaker.PlayerActivity
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.api.Track
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.data.searchview.SearchHistoryService
 
 class TrackAdapter(
     private val trackList: List<Track>,
     private val searchHistoryService: SearchHistoryService,
 ) : RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
 
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
 
     private val gson = Gson()
 
@@ -69,7 +66,7 @@ class TrackAdapter(
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
             trackViewTextArtisName.text = track.artistName
-            trackViewTextTrackTime.text = track.getSimpleTrackTime()
+            trackViewTextTrackTime.text = track.trackTime
         }
     }
 
@@ -80,5 +77,9 @@ class TrackAdapter(
             handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
         }
         return current
+    }
+
+    companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

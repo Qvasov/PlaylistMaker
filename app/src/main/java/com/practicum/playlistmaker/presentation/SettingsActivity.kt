@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation
 
 import android.content.Intent
 import android.content.SharedPreferences
@@ -10,6 +10,8 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import com.practicum.playlistmaker.App
+import com.practicum.playlistmaker.R
 
 class SettingsActivity : AppCompatActivity() {
     companion object {
@@ -27,7 +29,7 @@ class SettingsActivity : AppCompatActivity() {
         enableEdgeToEdge()
         setContentView(R.layout.activity_settings)
 
-        sharedPreferences = getSharedPreferences(App.PREFERENCES, MODE_PRIVATE)
+        sharedPreferences = getSharedPreferences(App.Companion.PREFERENCES, MODE_PRIVATE)
         nightSwitcher = findViewById(R.id.night)
         backButton = findViewById(R.id.backButton)
         shareButton = findViewById(R.id.share)
@@ -36,7 +38,7 @@ class SettingsActivity : AppCompatActivity() {
         nightSwitcher.setOnCheckedChangeListener { switcher, checked ->
             (applicationContext as App).switchTheme(checked)
             sharedPreferences.edit()
-                .putString(App.NIGHT_THEME, (applicationContext as App).darkTheme.toString())
+                .putString(App.Companion.NIGHT_THEME, (applicationContext as App).darkTheme.toString())
                 .apply()
         }
 

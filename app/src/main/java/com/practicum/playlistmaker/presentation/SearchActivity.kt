@@ -1,6 +1,5 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation
 
-import android.content.Context
 import android.content.SharedPreferences
 import android.graphics.drawable.Drawable
 import android.os.Bundle
@@ -24,10 +23,12 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
-import com.practicum.playlistmaker.api.Track
-import com.practicum.playlistmaker.api.iTunesApiResponse
-import com.practicum.playlistmaker.searchview.SearchHistoryService
-import com.practicum.playlistmaker.searchview.TrackAdapter
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
+import com.practicum.playlistmaker.data.dto.iTunesApiResponse
+import com.practicum.playlistmaker.data.searchview.SearchHistoryService
+import com.practicum.playlistmaker.domain.api.TracksInteractor
 import retrofit2.Call
 import retrofit2.Callback
 import retrofit2.Response
@@ -39,7 +40,7 @@ class SearchActivity : AppCompatActivity() {
         private const val SEARCH_DEBOUNCE_DELAY = 2000L
     }
 
-    private val iTunesApiController = RetrofitService.createITunesController()
+    private val trackInteractor = Creator.provideTracksInteractor()
     private lateinit var sharedPreferences: SharedPreferences
     private lateinit var searchHistoryService: SearchHistoryService
     private val handler = Handler(Looper.getMainLooper())
@@ -100,7 +101,7 @@ class SearchActivity : AppCompatActivity() {
         clearButton.setOnClickListener {
             searchEditText.setText("")
             val inputMethodManager =
-                getSystemService(Context.INPUT_METHOD_SERVICE) as? InputMethodManager
+                getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(searchEditText.windowToken, 0)
             searchEditText.clearFocus()
             trackList.clear()
@@ -173,6 +174,11 @@ class SearchActivity : AppCompatActivity() {
         }
     }
 
+    override fun onDestroy() {
+        super.onDestroy()
+        handler.removeCallbacks(searchRequest)
+    }
+
     private fun clearButtonVisibility(s: CharSequence?): Int {
         return if (s.isNullOrEmpty()) View.GONE else View.VISIBLE
     }
@@ -200,50 +206,23 @@ class SearchActivity : AppCompatActivity() {
         trackListView.visibility = View.GONE
         progressBar.visibility = View.VISIBLE
 
-        iTunesApiController.search(term)
-            .enqueue(object : Callback<iTunesApiResponse> {
-                override fun onResponse(
-                    call: Call<iTunesApiResponse>,
-                    response: Response<iTunesApiResponse>
-                ) {
-                    progressBar.visibility = View.GONE
-                    if (response.code() == 200) {
-                        if (response.body()?.results?.isNotEmpty() == true) {
-                            trackListView.visibility = View.VISIBLE
-                            trackList.clear()
-                            trackList.addAll(response.body()?.results!!)
-                            trackListAdapter.notifyDataSetChanged()
-                            showAlert(false)
-                        } else {
-                            showAlert(
-                                true,
-                                getString(R.string.not_found),
-                                getDrawable(R.drawable.not_found)
-                            )
-                        }
-                    } else if (response.code() == 404) {
-                        showAlert(
-                            true,
-                            getString(R.string.not_found),
-                            getDrawable(R.drawable.not_found)
-                        )
-                    } else {
-                        showAlert(
-                            true,
-                            getString(R.string.connection_lost)
-                                    + System.lineSeparator()
-                                    + System.lineSeparator()
-                                    + getString(R.string.fail_download),
-                            getDrawable(R.drawable.connection_lost),
-                            true
-                        )
-                    }
-                }
-
-                override fun onFailure(call: Call<iTunesApiResponse>, t: Throwable) {
-                    progressBar.visibility = View.GONE
-                    trackListView.visibility = View.VISIBLE
-                    showAlert(
+        trackInteractor.search(term, object : TracksInteractor.TracksConsumer {
+            override fun consume(foundTracks: List<Track>?) {
+                handler.post { progressBar.visibility = View.GONE }
+                if (foundTracks?.isNotEmpty() == true) {
+                    handler.post { trackListView.visibility = View.VISIBLE }
+                    trackList.clear()
+                    trackList.addAll(foundTracks)
+                    handler.post { trackListAdapter.notifyDataSetChanged()}
+                    showAlert(false)
+                } else if (foundTracks?.isEmpty() == true) {
+                    handler.post { showAlert(
+                        true,
+                        getString(R.string.not_found),
+                        getDrawable(R.drawable.not_found)
+                    )}
+                } else {
+                    handler.post { showAlert(
                         true,
                         getString(R.string.connection_lost)
                                 + System.lineSeparator()
@@ -251,9 +230,10 @@ class SearchActivity : AppCompatActivity() {
                                 + getString(R.string.fail_download),
                         getDrawable(R.drawable.connection_lost),
                         true
-                    )
+                    )}
                 }
-            })
+            }
+        })
     }
 
     private fun showAlert(
