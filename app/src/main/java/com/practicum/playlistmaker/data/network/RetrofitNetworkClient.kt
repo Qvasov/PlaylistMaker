@@ -3,26 +3,8 @@ package com.practicum.playlistmaker.data.network
 import com.practicum.playlistmaker.data.NetworkClient
 import com.practicum.playlistmaker.data.dto.Response
 import com.practicum.playlistmaker.data.dto.iTunesApiRequest
-import retrofit2.Retrofit
-import retrofit2.converter.gson.GsonConverterFactory
 
-class RetrofitNetworkClient : NetworkClient {
-    companion object {
-        private val ITUNES_BASE_URL = "https://itunes.apple.com"
-
-        fun createITunesController() : iTunesApi  {
-            return buildRetrofit(ITUNES_BASE_URL).create(iTunesApi::class.java)
-        }
-
-        private fun buildRetrofit(baseUrl: String): Retrofit {
-            return Retrofit.Builder()
-                .baseUrl(baseUrl)
-                .addConverterFactory(GsonConverterFactory.create())
-                .build()
-        }
-    }
-
-    private val iTunesService = createITunesController();
+class RetrofitNetworkClient(private val iTunesService: iTunesApi) : NetworkClient {
 
     override fun doRequest(dto: Any): Response {
         if (dto is iTunesApiRequest) {

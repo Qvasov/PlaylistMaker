@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.domain.impl
 
 import com.practicum.playlistmaker.domain.api.TracksInteractor
 import com.practicum.playlistmaker.domain.api.TracksRepository
+import com.practicum.playlistmaker.domain.models.Track
 import java.util.concurrent.Executors
 
 class TracksInteractorImpl(private val repository: TracksRepository) : TracksInteractor {
@@ -10,6 +11,24 @@ class TracksInteractorImpl(private val repository: TracksRepository) : TracksInt
     override fun search(expression: String, consumer: TracksInteractor.TracksConsumer) {
         executor.execute {
             consumer.consume(repository.search(expression))
+        }
+    }
+
+    override fun saveToHistory(track: Track) {
+        executor.execute {
+            repository.saveToHistory(track)
+        }
+    }
+
+    override fun getHistory(consumer: TracksInteractor.TracksConsumer) {
+        executor.execute {
+            consumer.consume(repository.getHistory())
+        }
+    }
+
+    override fun clearHistory() {
+        executor.execute {
+            repository.clearHistory()
         }
     }
 }

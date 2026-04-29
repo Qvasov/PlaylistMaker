@@ -1,14 +1,7 @@
 package com.practicum.playlistmaker.domain.models
 
-import com.google.gson.annotations.SerializedName
-import java.text.SimpleDateFormat
-import java.time.Instant
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.util.Locale
-
 data class Track(
-    val trackId: Int,
+    val trackId: Long,
     val trackName: String,
     val artistName: String,
     val trackTime: String,

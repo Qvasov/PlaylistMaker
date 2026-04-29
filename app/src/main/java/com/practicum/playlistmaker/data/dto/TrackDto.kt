@@ -8,7 +8,7 @@ import java.time.ZoneId
 import java.util.Locale
 
 data class TrackDto(
-    val trackId: Int,
+    val trackId: Long,
     val trackName: String,
     val artistName: String,
     @SerializedName("trackTimeMillis")

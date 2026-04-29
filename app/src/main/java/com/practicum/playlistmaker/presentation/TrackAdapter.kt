@@ -1,8 +1,5 @@
 package com.practicum.playlistmaker.presentation
 
-import android.content.Intent
-import android.os.Handler
-import android.os.Looper
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -11,21 +8,15 @@ import android.widget.TextView
 import androidx.recyclerview.widget.RecyclerView
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.domain.models.Track
-import com.practicum.playlistmaker.data.searchview.SearchHistoryService
 
 class TrackAdapter(
-    private val trackList: List<Track>,
-    private val searchHistoryService: SearchHistoryService,
+    private val trackClickListener: TrackClickListener
 ) : RecyclerView.Adapter<TrackAdapter.TrackHolder>() {
 
+    var trackList: List<Track> = emptyList()
 
-    private val gson = Gson()
-
-    private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
 
     override fun onCreateViewHolder(parent: ViewGroup, viewType: Int): TrackHolder {
         val view = LayoutInflater.from(parent.context).inflate(R.layout.track_view, parent, false)
@@ -35,12 +26,7 @@ class TrackAdapter(
     override fun onBindViewHolder(holder: TrackHolder, position: Int) {
         holder.bind(trackList[position])
         holder.itemView.setOnClickListener {
-            if (clickDebounce()) {
-                searchHistoryService.addTrackToTrackHistory(trackList[position])
-                val playerIntent = Intent(holder.itemView.context, PlayerActivity::class.java)
-                playerIntent.putExtra(PlayerActivity.TRACK, gson.toJson(trackList[position]))
-                holder.itemView.context.startActivity(playerIntent)
-            }
+            trackClickListener.onTrackClick(trackList[position])
         }
     }
 
@@ -70,16 +56,7 @@ class TrackAdapter(
         }
     }
 
-    private fun clickDebounce() : Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
-    }
-
-    companion object {
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
+    fun interface TrackClickListener {
+        fun onTrackClick(track: Track)
     }
 }

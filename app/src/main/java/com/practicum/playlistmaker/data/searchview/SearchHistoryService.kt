@@ -1,15 +1,22 @@
 package com.practicum.playlistmaker.data.searchview
 
+import android.content.Context
 import android.content.SharedPreferences
-import com.google.gson.Gson
+import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
+import com.practicum.playlistmaker.Creator
 import com.practicum.playlistmaker.domain.models.Track
 
-class SearchHistoryService(val sharedPreferences: SharedPreferences) {
+class SearchHistoryService(context: Context) {
     companion object {
         private const val TRACK_HISTORY = "track_history"
+        private const val SEARCH_ACTIVITY = "search_activity"
     }
 
-    private val gson = Gson()
+    private val sharedPreferences: SharedPreferences = context.getSharedPreferences(
+        SEARCH_ACTIVITY, MODE_PRIVATE
+    )
+
+    private val gson = Creator.createGson()
 
     fun getTrackHistory(): MutableList<Track> {
         val json = sharedPreferences.getString(TRACK_HISTORY, "[]")
