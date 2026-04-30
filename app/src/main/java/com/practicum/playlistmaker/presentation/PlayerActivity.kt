@@ -1,4 +1,4 @@
-package com.practicum.playlistmaker
+package com.practicum.playlistmaker.presentation
 
 import android.media.MediaPlayer
 import android.os.Bundle
@@ -12,26 +12,29 @@ import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
-import com.google.gson.Gson
-import com.practicum.playlistmaker.api.Track
+import com.practicum.playlistmaker.Creator
+import com.practicum.playlistmaker.R
+import com.practicum.playlistmaker.domain.models.Track
 import kotlinx.coroutines.Runnable
 import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerActivity : AppCompatActivity() {
     companion object {
+        enum class PlayerState {
+            DEFAULT,
+            PREPARED,
+            PLAYING,
+            PAUSED
+        }
         const val TRACK = "TRACK"
         private const val START_TIME = "00:00"
-
-        private const val STATE_DEFAULT = 0
-        private const val STATE_PREPARED = 1
-        private const val STATE_PLAYING = 2
-        private const val STATE_PAUSED = 3
+        private const val TIMER_DELAY = 350L
     }
 
-    private val gson = Gson()
+    private val gson = Creator.createGson()
     private var mediaPlayer = MediaPlayer()
-    private var playerState = STATE_DEFAULT
+    private var playerState = PlayerState.DEFAULT
     private var handler: Handler? = null
     private var timerTask: Runnable = createTimerTask()
     private lateinit var track: Track
@@ -79,7 +82,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         Glide.with(this)
-            .load(track.getCoverArtwork())
+            .load(track.artworkUrl100)
             .placeholder(R.drawable.album_place_holder)
             .fitCenter()
             .transform(RoundedCorners(8))
@@ -87,9 +90,9 @@ class PlayerActivity : AppCompatActivity() {
         trackName.text = track.trackName
         artistName.text = track.artistName
         playTime.text = START_TIME
-        trackTime.text = track.getSimpleTrackTime()
+        trackTime.text = track.trackTime
         collectionName.text = track.collectionName
-        releaseDate.text = track.getReleaseYear()
+        releaseDate.text = track.releaseDate
         primaryGenreName.text = track.primaryGenreName
         country.text = track.country
 
@@ -105,13 +108,13 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.prepareAsync()
         mediaPlayer.setOnPreparedListener {
             playPauseButton.isEnabled = true
-            playerState = STATE_PREPARED
+            playerState = PlayerState.PREPARED
         }
         mediaPlayer.setOnCompletionListener {
             playPauseButton.setImageResource(R.drawable.play_button)
             handler?.removeCallbacks(timerTask)
             playTime.text = START_TIME
-            playerState = STATE_PREPARED
+            playerState = PlayerState.PREPARED
         }
     }
 
@@ -119,25 +122,25 @@ class PlayerActivity : AppCompatActivity() {
         mediaPlayer.start()
         playPauseButton.setImageResource(R.drawable.pause_button)
         handler?.post(timerTask)
-        playerState = STATE_PLAYING
+        playerState = PlayerState.PLAYING
     }
 
     private fun pausePlayer() {
         mediaPlayer.pause()
         playPauseButton.setImageResource(R.drawable.play_button)
         handler?.removeCallbacks(timerTask)
-        playerState = STATE_PAUSED
+        playerState = PlayerState.PAUSED
     }
 
     private fun playbackControl() {
         when (playerState) {
-            STATE_PLAYING -> {
+            PlayerState.PLAYING -> {
                 pausePlayer()
             }
-
-            STATE_PREPARED, STATE_PAUSED -> {
+            PlayerState.PREPARED, PlayerState.PAUSED -> {
                 startPlayer()
             }
+            else -> {}
         }
     }
 
@@ -161,7 +164,7 @@ class PlayerActivity : AppCompatActivity() {
                 ).format(mediaPlayer.currentPosition)
 
                 playTime.text = elapsedTime.toString()
-                handler?.postDelayed(this, 350)
+                handler?.postDelayed(this, TIMER_DELAY)
             }
         }
     }
