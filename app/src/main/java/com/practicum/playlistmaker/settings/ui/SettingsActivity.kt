@@ -13,24 +13,28 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
 
 class SettingsActivity : AppCompatActivity() {
-    companion object {
-        const val COURSE_URL = "https://practicum.yandex.ru"
-        const val USER_AGREEMENT_URL = "https://yandex.ru/legal/practicum_offer/"
-    }
-
     private lateinit var binding: ActivitySettingsBinding
     private var viewModel: SettingViewModel? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivitySettingsBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
 
         viewModel = ViewModelProvider(this, SettingViewModel.getFactory())
             .get(SettingViewModel::class.java)
 
-        binding.night.isChecked = (applicationContext as App).darkTheme
+        viewModel?.observeNightMode()?.observe(this) {
+            binding.night.isChecked = it
+            (applicationContext as App).switchTheme(it)
+        }
+
         binding.night.setOnCheckedChangeListener { _, checked ->
             viewModel?.switchTheme(checked)
         }
@@ -58,11 +62,10 @@ class SettingsActivity : AppCompatActivity() {
             val shareIntent = Intent(Intent.ACTION_VIEW, Uri.parse(USER_AGREEMENT_URL))
             startActivity(shareIntent)
         }
+    }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
+    companion object {
+        const val COURSE_URL = "https://practicum.yandex.ru"
+        const val USER_AGREEMENT_URL = "https://yandex.ru/legal/practicum_offer/"
     }
 }

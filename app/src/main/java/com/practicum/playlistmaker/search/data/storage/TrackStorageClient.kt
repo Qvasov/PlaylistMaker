@@ -12,11 +12,6 @@ class TrackStorageClient<T>(
     private val dataKey: String,
     private val type: Type
 ) : StorageClient<T> {
-
-    companion object {
-        private const val TRACK_STORAGE = "track_storage"
-    }
-
     private val sharedPreferences: SharedPreferences =
         context.getSharedPreferences(TRACK_STORAGE, MODE_PRIVATE)
     private val gson = Creator.createGson()
@@ -34,5 +29,9 @@ class TrackStorageClient<T>(
 
     override fun clearData() {
         sharedPreferences.edit().remove(dataKey).apply()
+    }
+
+    companion object {
+        private const val TRACK_STORAGE = "track_storage"
     }
 }

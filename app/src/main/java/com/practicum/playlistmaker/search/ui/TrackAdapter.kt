@@ -48,11 +48,13 @@ class TrackAdapter(
                 .load(track.artworkUrl100)
                 .placeholder(R.drawable.album_place_holder)
                 .centerInside()
-                .transform(RoundedCorners(2))
+                .transform(RoundedCorners((itemView.context.resources.displayMetrics.density * 2 + 0.5f).toInt()))
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
             trackViewTextArtisName.text = track.artistName
             trackViewTextTrackTime.text = track.trackTime
+
+
         }
     }
 

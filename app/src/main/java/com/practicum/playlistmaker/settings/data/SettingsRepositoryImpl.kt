@@ -9,11 +9,15 @@ class SettingsRepositoryImpl(
     private val context: Context,
 ) : SettingsRepository {
 
-    val sharedPreferences = context.getSharedPreferences(App.PREFERENCES, MODE_PRIVATE)
+    private val sharedPreferences = context.getSharedPreferences(App.PREFERENCES, MODE_PRIVATE)
 
     override fun saveNightModeStatus(enabled: Boolean) {
         sharedPreferences.edit()
             .putString(App.NIGHT_THEME, enabled.toString())
             .apply()
+    }
+
+    override fun getNightModeStatus(): String? {
+        return sharedPreferences.getString(App.NIGHT_THEME, null)
     }
 }

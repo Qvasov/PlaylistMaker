@@ -4,7 +4,6 @@ import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
-import android.text.Editable
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -13,6 +12,7 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
+import androidx.core.widget.doOnTextChanged
 import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.practicum.playlistmaker.R
@@ -21,12 +21,6 @@ import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerActivity
 
 class SearchActivity : AppCompatActivity() {
-
-    companion object {
-        const val SEARCH_EDITTEXT_TEXT = "SEARCH_EDITTEXT_TEXT"
-        private const val CLICK_DEBOUNCE_DELAY = 1000L
-    }
-
     private lateinit var binding: ActivitySearchBinding
 
     private var viewModel: SearchViewModel? = null
@@ -45,9 +39,15 @@ class SearchActivity : AppCompatActivity() {
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivitySearchBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.search) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
 
         binding.trackListView.adapter = trackListAdapter
 
@@ -70,24 +70,17 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
             binding.searchEditText.clearFocus()
-            viewModel?.getHistory()
+            viewModel?.uploadHistory()
         }
 
-        textWatcher = object : TextWatcher {
-            override fun beforeTextChanged(s: CharSequence?, start: Int, count: Int, after: Int) {}
-            override fun onTextChanged(s: CharSequence?, start: Int, before: Int, count: Int) {
-                binding.clearIcon.visibility = clearButtonVisibility(s)
-                if (binding.searchEditText.hasFocus() && s.isNullOrEmpty()) {
-                    viewModel?.getHistory()
-                } else {
-                    viewModel?.searchDebounce(s?.toString() ?: "")
-                }
+        binding.searchEditText.doOnTextChanged { text, start, before, count ->
+            binding.clearIcon.visibility = clearButtonVisibility(text)
+            if (binding.searchEditText.hasFocus() && text.isNullOrEmpty()) {
+                viewModel?.uploadHistory()
+            } else {
+                viewModel?.searchDebounce(text?.toString() ?: "")
             }
-
-            override fun afterTextChanged(s: Editable?) {}
         }
-        textWatcher?.let { binding.searchEditText.addTextChangedListener(it) }
-
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
                 viewModel?.searchInstant(binding.searchEditText.text.toString())
@@ -98,7 +91,7 @@ class SearchActivity : AppCompatActivity() {
         binding.searchEditText.requestFocus()
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
-                viewModel?.getHistory()
+                viewModel?.uploadHistory()
             }
         }
 
@@ -110,14 +103,8 @@ class SearchActivity : AppCompatActivity() {
             viewModel?.clearHistory()
         }
 
-        ViewCompat.setOnApplyWindowInsetsListener(binding.search) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
 
-
-        viewModel?.getHistory()
+        viewModel?.uploadHistory()
     }
 
     override fun onDestroy() {
@@ -231,5 +218,10 @@ class SearchActivity : AppCompatActivity() {
 
         binding.historyAlertText.visibility = View.GONE
         binding.historyClearButton.visibility = View.GONE
+    }
+
+    companion object {
+        const val SEARCH_EDITTEXT_TEXT = "SEARCH_EDITTEXT_TEXT"
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

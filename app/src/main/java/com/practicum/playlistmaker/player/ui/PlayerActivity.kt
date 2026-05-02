@@ -14,20 +14,21 @@ import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.search.domain.models.Track
 
 class PlayerActivity : AppCompatActivity() {
-    companion object {
-        const val TRACK = "TRACK"
-        private const val START_TIME = "00:00"
-    }
-
     private val gson = Creator.createGson()
     private var viewModel: PlayerViewModel? = null
     private lateinit var binding: ActivityPlayerBinding
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        enableEdgeToEdge()
         binding = ActivityPlayerBinding.inflate(layoutInflater)
         setContentView(binding.root)
+        enableEdgeToEdge()
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
+            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
+            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
+            insets
+        }
+
 
         viewModel = ViewModelProvider(this, PlayerViewModel.getFactory())
             .get(PlayerViewModel::class.java)
@@ -63,7 +64,7 @@ class PlayerActivity : AppCompatActivity() {
             .load(track.artworkUrl100)
             .placeholder(R.drawable.album_place_holder)
             .fitCenter()
-            .transform(RoundedCorners(8))
+            .transform(RoundedCorners((resources.displayMetrics.density * 8 + 0.5f).toInt()))
             .into(binding.coverArtwork)
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
@@ -75,16 +76,15 @@ class PlayerActivity : AppCompatActivity() {
         binding.country.text = track.country
 
         viewModel?.preparePlayer(track.previewUrl)
-
-        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
-        }
     }
 
     override fun onPause() {
         super.onPause()
         viewModel?.pausePlayer()
+    }
+
+    companion object {
+        const val TRACK = "TRACK"
+        private const val START_TIME = "00:00"
     }
 }

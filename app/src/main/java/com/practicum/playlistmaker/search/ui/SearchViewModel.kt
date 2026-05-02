@@ -17,18 +17,6 @@ import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.models.Track
 
 class SearchViewModel(private val context: Context) : ViewModel() {
-    companion object {
-        private const val SEARCH_DEBOUNCE_DELAY = 2000L
-        private val SEARCH_REQUEST_TOKEN = Any()
-
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = (this[APPLICATION_KEY] as App)
-                SearchViewModel(app)
-            }
-        }
-    }
-
     private var trackInteractor = Creator.provideTracksInteractor(context)
     private val handler = Handler(Looper.getMainLooper())
     private var lastSearchText: String? = null
@@ -86,7 +74,7 @@ class SearchViewModel(private val context: Context) : ViewModel() {
         renderState(SearchState.History(emptyList()))
     }
 
-    fun getHistory() {
+    fun uploadHistory() {
         lastSearchText = ""
         handler.removeCallbacksAndMessages(SEARCH_REQUEST_TOKEN)
 
@@ -101,5 +89,17 @@ class SearchViewModel(private val context: Context) : ViewModel() {
 
     private fun renderState(state: SearchState) {
         stateLiveData.postValue(state)
+    }
+
+    companion object {
+        private const val SEARCH_DEBOUNCE_DELAY = 2000L
+        private val SEARCH_REQUEST_TOKEN = Any()
+
+        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                val app = (this[APPLICATION_KEY] as App)
+                SearchViewModel(app)
+            }
+        }
     }
 }

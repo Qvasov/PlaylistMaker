@@ -13,17 +13,6 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel() : ViewModel() {
-    companion object {
-        private const val START_TIME = "00:00"
-        private const val TIMER_DELAY = 350L
-
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel()
-            }
-        }
-    }
-
     enum class PlayerState {
         PREPARED,
         PLAYING,
@@ -34,6 +23,7 @@ class PlayerViewModel() : ViewModel() {
     private var playerState: PlayerState? = null
     private var handler: Handler = Handler(Looper.getMainLooper())
     private var timerTask: Runnable = createTimerTask()
+    private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
 
     private val stateLiveData = MutableLiveData<PlayerState>()
@@ -89,12 +79,20 @@ class PlayerViewModel() : ViewModel() {
     private fun createTimerTask(): Runnable {
         return object : Runnable {
             override fun run() {
-                val elapsedTime = SimpleDateFormat(
-                    "mm:ss",
-                    Locale.getDefault()
-                ).format(mediaPlayer.currentPosition)
+                val elapsedTime = dateFormat.format(mediaPlayer.currentPosition)
                 timerLiveData.postValue(elapsedTime)
                 handler.postDelayed(this, TIMER_DELAY)
+            }
+        }
+    }
+
+    companion object {
+        private const val START_TIME = "00:00"
+        private const val TIMER_DELAY = 350L
+
+        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
+            initializer {
+                PlayerViewModel()
             }
         }
     }
