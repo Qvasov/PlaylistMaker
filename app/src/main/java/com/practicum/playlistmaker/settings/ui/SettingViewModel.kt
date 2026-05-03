@@ -5,15 +5,13 @@ import android.content.Context
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.ViewModelProvider.AndroidViewModelFactory.Companion.APPLICATION_KEY
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
-import com.practicum.playlistmaker.App
-import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.settings.domain.SettingsRepository
 
-class SettingViewModel(private val context: Context): ViewModel() {
-    private val settingsRepository = Creator.provideSettingsRepository(context)
+
+class SettingViewModel(
+    private val context: Context,
+    private val settingsRepository: SettingsRepository
+) : ViewModel() {
 
     private val nightMode = MutableLiveData<Boolean>()
 
@@ -36,14 +34,5 @@ class SettingViewModel(private val context: Context): ViewModel() {
     fun switchTheme(nightModeEnabled: Boolean) {
         nightMode.postValue(nightModeEnabled)
         settingsRepository.saveNightModeStatus(nightModeEnabled)
-    }
-
-    companion object {
-        fun getFactory() : ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                val app = (this[APPLICATION_KEY] as App)
-                SettingViewModel(app)
-            }
-        }
     }
 }

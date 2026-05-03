@@ -13,24 +13,25 @@ import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerActivity
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
+    private val viewModel: SearchViewModel by viewModel()
+    private val gson: Gson by inject()
 
-    private var viewModel: SearchViewModel? = null
-    private val gson = Creator.createGson()
+    private val handler: Handler = Handler(Looper.getMainLooper())
     private var isClickAllowed = true
-    private val handler = Handler(Looper.getMainLooper())
     private var textWatcher: TextWatcher? = null
-    private var trackListAdapter = TrackAdapter {
+    private val trackListAdapter = TrackAdapter {
         if (clickDebounce()) {
-            viewModel?.saveToHistory(it)
+            viewModel.saveToHistory(it)
             val playerIntent = Intent(this, PlayerActivity::class.java)
             playerIntent.putExtra(PlayerActivity.TRACK, gson.toJson(it))
             startActivity(playerIntent)
@@ -48,12 +49,9 @@ class SearchActivity : AppCompatActivity() {
             insets
         }
 
-
         binding.trackListView.adapter = trackListAdapter
 
-        viewModel = ViewModelProvider(this, SearchViewModel.getFactory())
-            .get(SearchViewModel::class.java)
-        viewModel?.observeState()?.observe(this) {
+        viewModel.observeState().observe(this) {
             render(it)
         }
 
@@ -70,20 +68,20 @@ class SearchActivity : AppCompatActivity() {
             val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
             binding.searchEditText.clearFocus()
-            viewModel?.uploadHistory()
+            viewModel.uploadHistory()
         }
 
-        binding.searchEditText.doOnTextChanged { text, start, before, count ->
+        textWatcher = binding.searchEditText.doOnTextChanged { text, start, before, count ->
             binding.clearIcon.visibility = clearButtonVisibility(text)
             if (binding.searchEditText.hasFocus() && text.isNullOrEmpty()) {
-                viewModel?.uploadHistory()
+                viewModel.uploadHistory()
             } else {
-                viewModel?.searchDebounce(text?.toString() ?: "")
+                viewModel.searchDebounce(text?.toString() ?: "")
             }
         }
         binding.searchEditText.setOnEditorActionListener { _, actionId, _ ->
             if (actionId == EditorInfo.IME_ACTION_DONE) {
-                viewModel?.searchInstant(binding.searchEditText.text.toString())
+                viewModel.searchInstant(binding.searchEditText.text.toString())
                 true
             }
             false
@@ -91,25 +89,25 @@ class SearchActivity : AppCompatActivity() {
         binding.searchEditText.requestFocus()
         binding.searchEditText.setOnFocusChangeListener { _, hasFocus ->
             if (hasFocus && binding.searchEditText.text.isEmpty()) {
-                viewModel?.uploadHistory()
+                viewModel.uploadHistory()
             }
         }
 
         binding.refreshButton.setOnClickListener {
-            viewModel?.searchInstant(binding.searchEditText.text.toString())
+            viewModel.searchInstant(binding.searchEditText.text.toString())
         }
 
         binding.historyClearButton.setOnClickListener {
-            viewModel?.clearHistory()
+            viewModel.clearHistory()
         }
 
 
-        viewModel?.uploadHistory()
+        viewModel.uploadHistory()
     }
 
     override fun onDestroy() {
         super.onDestroy()
-        textWatcher?.let { binding.searchEditText.removeTextChangedListener(it) }
+        binding.searchEditText.removeTextChangedListener(textWatcher)
     }
 
     override fun onSaveInstanceState(outState: Bundle) {

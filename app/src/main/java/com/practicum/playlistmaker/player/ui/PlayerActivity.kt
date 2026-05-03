@@ -5,18 +5,20 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
+import com.google.gson.Gson
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.creator.Creator
 import com.practicum.playlistmaker.databinding.ActivityPlayerBinding
 import com.practicum.playlistmaker.search.domain.models.Track
+import org.koin.android.ext.android.inject
+import org.koin.androidx.viewmodel.ext.android.viewModel
+
 
 class PlayerActivity : AppCompatActivity() {
-    private val gson = Creator.createGson()
-    private var viewModel: PlayerViewModel? = null
     private lateinit var binding: ActivityPlayerBinding
+    private val viewModel: PlayerViewModel by viewModel()
+    private val gson: Gson by inject()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -29,25 +31,25 @@ class PlayerActivity : AppCompatActivity() {
             insets
         }
 
-
-        viewModel = ViewModelProvider(this, PlayerViewModel.getFactory())
-            .get(PlayerViewModel::class.java)
-        viewModel?.observeState()?.observe(this) {
+        viewModel.observeState().observe(this) {
             when (it) {
                 PlayerViewModel.PlayerState.PREPARED -> {
                     binding.playPauseButton.isEnabled = true
                     binding.playPauseButton.setImageResource(R.drawable.play_button)
                 }
+
                 PlayerViewModel.PlayerState.PLAYING -> {
                     binding.playPauseButton.setImageResource(R.drawable.pause_button)
                 }
+
                 PlayerViewModel.PlayerState.PAUSED -> {
                     binding.playPauseButton.setImageResource(R.drawable.play_button)
                 }
+
                 else -> {}
             }
         }
-        viewModel?.observeTimer()?.observe(this) {
+        viewModel.observeTimer().observe(this) {
             binding.playTime.text = it
         }
 
@@ -56,7 +58,7 @@ class PlayerActivity : AppCompatActivity() {
         }
 
         binding.playPauseButton.setOnClickListener {
-            viewModel?.playbackControl()
+            viewModel.playbackControl()
         }
 
         val track = gson.fromJson(intent.getStringExtra(TRACK), Track::class.java)
@@ -75,12 +77,12 @@ class PlayerActivity : AppCompatActivity() {
         binding.primaryGenreName.text = track.primaryGenreName
         binding.country.text = track.country
 
-        viewModel?.preparePlayer(track.previewUrl)
+        viewModel.preparePlayer(track.previewUrl)
     }
 
     override fun onPause() {
         super.onPause()
-        viewModel?.pausePlayer()
+        viewModel.pausePlayer()
     }
 
     companion object {

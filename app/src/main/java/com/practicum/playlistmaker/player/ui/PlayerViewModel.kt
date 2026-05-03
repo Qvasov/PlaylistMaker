@@ -6,22 +6,21 @@ import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.ViewModelProvider
-import androidx.lifecycle.viewmodel.initializer
-import androidx.lifecycle.viewmodel.viewModelFactory
 import java.text.SimpleDateFormat
 import java.util.Locale
 
-class PlayerViewModel() : ViewModel() {
+class PlayerViewModel(
+    private var mediaPlayer: MediaPlayer
+) : ViewModel() {
+
     enum class PlayerState {
         PREPARED,
         PLAYING,
         PAUSED
     }
 
-    private var mediaPlayer = MediaPlayer()
+    private val handler: Handler = Handler(Looper.getMainLooper())
     private var playerState: PlayerState? = null
-    private var handler: Handler = Handler(Looper.getMainLooper())
     private var timerTask: Runnable = createTimerTask()
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
@@ -89,11 +88,5 @@ class PlayerViewModel() : ViewModel() {
     companion object {
         private const val START_TIME = "00:00"
         private const val TIMER_DELAY = 350L
-
-        fun getFactory(): ViewModelProvider.Factory = viewModelFactory {
-            initializer {
-                PlayerViewModel()
-            }
-        }
     }
 }

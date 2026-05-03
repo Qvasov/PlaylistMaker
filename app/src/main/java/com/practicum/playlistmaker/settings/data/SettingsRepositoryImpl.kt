@@ -1,23 +1,23 @@
 package com.practicum.playlistmaker.settings.data
 
-import android.content.Context
-import androidx.appcompat.app.AppCompatActivity.MODE_PRIVATE
-import com.practicum.playlistmaker.App
+import android.content.SharedPreferences
 import com.practicum.playlistmaker.settings.domain.SettingsRepository
 
 class SettingsRepositoryImpl(
-    private val context: Context,
+    private val sharedPreferences: SharedPreferences,
 ) : SettingsRepository {
-
-    private val sharedPreferences = context.getSharedPreferences(App.PREFERENCES, MODE_PRIVATE)
 
     override fun saveNightModeStatus(enabled: Boolean) {
         sharedPreferences.edit()
-            .putString(App.NIGHT_THEME, enabled.toString())
+            .putString(NIGHT_THEME, enabled.toString())
             .apply()
     }
 
     override fun getNightModeStatus(): String? {
-        return sharedPreferences.getString(App.NIGHT_THEME, null)
+        return sharedPreferences.getString(NIGHT_THEME, null)
+    }
+
+    private companion object {
+        const val NIGHT_THEME = "night_theme"
     }
 }

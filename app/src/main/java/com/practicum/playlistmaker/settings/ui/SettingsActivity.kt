@@ -7,14 +7,14 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import androidx.lifecycle.ViewModelProvider
 import com.practicum.playlistmaker.App
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.ActivitySettingsBinding
+import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class SettingsActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySettingsBinding
-    private var viewModel: SettingViewModel? = null
+    private val viewModel: SettingViewModel by viewModel()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -27,16 +27,13 @@ class SettingsActivity : AppCompatActivity() {
             insets
         }
 
-        viewModel = ViewModelProvider(this, SettingViewModel.getFactory())
-            .get(SettingViewModel::class.java)
-
-        viewModel?.observeNightMode()?.observe(this) {
+        viewModel.observeNightMode().observe(this) {
             binding.night.isChecked = it
             (applicationContext as App).switchTheme(it)
         }
 
         binding.night.setOnCheckedChangeListener { _, checked ->
-            viewModel?.switchTheme(checked)
+            viewModel.switchTheme(checked)
         }
 
         binding.backButton.setOnClickListener {
