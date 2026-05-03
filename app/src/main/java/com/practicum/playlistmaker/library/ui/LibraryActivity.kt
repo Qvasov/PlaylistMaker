@@ -5,17 +5,37 @@ import androidx.activity.enableEdgeToEdge
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.view.ViewCompat
 import androidx.core.view.WindowInsetsCompat
-import com.practicum.playlistmaker.R
+import com.google.android.material.tabs.TabLayoutMediator
+import com.practicum.playlistmaker.databinding.ActivityLibraryBinding
 
 class LibraryActivity : AppCompatActivity() {
+
+    private lateinit var binding: ActivityLibraryBinding
+    private lateinit var tabMediator: TabLayoutMediator
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-        setContentView(R.layout.activity_library)
-        ViewCompat.setOnApplyWindowInsetsListener(findViewById(R.id.main)) { v, insets ->
+        binding = ActivityLibraryBinding.inflate(layoutInflater)
+        setContentView(binding.root)
+        ViewCompat.setOnApplyWindowInsetsListener(binding.root) { v, insets ->
             val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
             v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
             insets
         }
+
+        binding.pager.adapter = PagerAdapter(supportFragmentManager, lifecycle)
+        tabMediator = TabLayoutMediator(binding.tabLayout, binding.pager) { tab, position ->
+            when(position) {
+                0 -> tab.text = "Избранные треки"
+                1 -> tab.text = "Плейлисты"
+            }
+        }
+        tabMediator.attach()
+
+        binding.backButton.setOnClickListener {
+            onBackPressedDispatcher.onBackPressed()
+        }
+
     }
 }
