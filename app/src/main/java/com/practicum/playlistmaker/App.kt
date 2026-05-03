@@ -4,41 +4,38 @@ import android.app.Application
 import android.app.UiModeManager
 import android.content.Context
 import androidx.appcompat.app.AppCompatDelegate
+import com.practicum.playlistmaker.creator.Creator
+import com.practicum.playlistmaker.settings.domain.SettingsRepository
 
 class App : Application() {
-    companion object {
-        const val PREFERENCES = "preferences"
-        const val NIGHT_THEME = "night_theme"
-    }
-    var darkTheme = false
+    private lateinit var settingsRepository: SettingsRepository
 
     override fun onCreate() {
         super.onCreate()
+        settingsRepository = Creator.provideSettingsRepository(this)
 
-        val sharedPrefs = getSharedPreferences(PREFERENCES, MODE_PRIVATE)
-        val nightTheme = sharedPrefs.getString(NIGHT_THEME, null)
-
-        if (nightTheme == null) {
+        val nightMode = settingsRepository.getNightModeStatus()
+        if (nightMode == null) {
             val uiModeManager = this.getSystemService(Context.UI_MODE_SERVICE) as UiModeManager
             if (uiModeManager.nightMode == UiModeManager.MODE_NIGHT_YES) {
-                darkTheme = true
+                switchTheme(true)
             } else {
-                darkTheme = false
+                switchTheme(false)
             }
         } else {
-            darkTheme = nightTheme.toBoolean()
+            switchTheme(nightMode.toBoolean())
         }
-
-        switchTheme(darkTheme)
     }
 
     fun switchTheme(darkThemeEnabled : Boolean) {
-        darkTheme = darkThemeEnabled
-
         AppCompatDelegate.setDefaultNightMode(
             if (darkThemeEnabled) AppCompatDelegate.MODE_NIGHT_YES
             else AppCompatDelegate.MODE_NIGHT_NO
         )
+    }
 
+    companion object {
+        const val PREFERENCES = "preferences"
+        const val NIGHT_THEME = "night_theme"
     }
 }

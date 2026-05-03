@@ -57,7 +57,7 @@
                 android:paddingStart="@dimen/edit_text_hint_icon_padding_edge"
                 android:singleLine="true"
                 android:textColor="@color/yp_black"
-                android:textColorHint="@color/yp_hint_grey"
+                android:textColorHint="@color/yp_black"
                 android:textCursorDrawable="@drawable/cursor"
                 android:textSize="@dimen/edit_text_hint_text_size" />
 
@@ -98,7 +98,7 @@
         android:visibility="gone" />
 
     <androidx.recyclerview.widget.RecyclerView
-        android:id="@+id/trackList"
+        android:id="@+id/track_list_view"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         app:layoutManager="androidx.recyclerview.widget.LinearLayoutManager" />
