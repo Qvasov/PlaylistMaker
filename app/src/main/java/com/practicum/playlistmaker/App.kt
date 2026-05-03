@@ -7,8 +7,6 @@ import androidx.appcompat.app.AppCompatDelegate
 import com.practicum.playlistmaker.di.dataModule
 import com.practicum.playlistmaker.di.interactorModule
 import com.practicum.playlistmaker.di.repositoryModule
-import com.practicum.playlistmaker.di.uiModule
-import com.practicum.playlistmaker.di.utilsModule
 import com.practicum.playlistmaker.di.viewModelModule
 import com.practicum.playlistmaker.settings.domain.SettingsRepository
 import org.koin.android.ext.android.inject
@@ -22,7 +20,7 @@ class App : Application() {
         super.onCreate()
         startKoin{
             androidContext(this@App)
-            modules(dataModule, repositoryModule, interactorModule, viewModelModule, uiModule, utilsModule)
+            modules(dataModule, repositoryModule, interactorModule, viewModelModule)
         }
 
         val nightMode = settingsRepository.getNightModeStatus()

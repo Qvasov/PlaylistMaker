@@ -4,8 +4,6 @@ import android.content.Context
 import android.content.SharedPreferences
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
-import com.practicum.playlistmaker.di.DataModule.ITUNES_BASE_URL
-import com.practicum.playlistmaker.di.DataModule.TRACK_STORAGE
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.StorageClient
 import com.practicum.playlistmaker.search.data.network.RetrofitNetworkClient
@@ -18,10 +16,9 @@ import org.koin.dsl.module
 import retrofit2.Retrofit
 import retrofit2.converter.gson.GsonConverterFactory
 
-private object DataModule {
-    const val ITUNES_BASE_URL = "https://itunes.apple.com"
-    const val TRACK_STORAGE = "track_storage"
-}
+private const val ITUNES_BASE_URL = "https://itunes.apple.com"
+private const val TRACK_STORAGE = "track_storage"
+
 
 val dataModule = module {
     single<iTunesApi> {

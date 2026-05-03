@@ -3,6 +3,7 @@ package com.practicum.playlistmaker.search.ui
 import android.content.Intent
 import android.os.Bundle
 import android.os.Handler
+import android.os.Looper
 import android.text.TextWatcher
 import android.view.View
 import android.view.inputmethod.EditorInfo
@@ -19,15 +20,16 @@ import com.practicum.playlistmaker.databinding.ActivitySearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerActivity
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
-import org.koin.core.parameter.parametersOf
 
 class SearchActivity : AppCompatActivity() {
     private lateinit var binding: ActivitySearchBinding
     private val viewModel: SearchViewModel by viewModel()
     private val gson: Gson by inject()
-    private val handler: Handler by inject()
-    private val trackListAdapter: TrackAdapter by inject { parametersOf(trackClickListener) }
-    private val trackClickListener = TrackAdapter.TrackClickListener {
+
+    private val handler: Handler = Handler(Looper.getMainLooper())
+    private var isClickAllowed = true
+    private var textWatcher: TextWatcher? = null
+    private val trackListAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.saveToHistory(it)
             val playerIntent = Intent(this, PlayerActivity::class.java)
@@ -35,9 +37,6 @@ class SearchActivity : AppCompatActivity() {
             startActivity(playerIntent)
         }
     }
-    private var isClickAllowed = true
-    private var textWatcher: TextWatcher? = null
-
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)

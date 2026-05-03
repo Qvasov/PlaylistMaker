@@ -6,7 +6,7 @@ import org.koin.dsl.module
 
 
 val interactorModule = module {
-    single<TracksInteractor> {
+    factory<TracksInteractor> {
         TracksInteractorImpl(get())
     }
 }

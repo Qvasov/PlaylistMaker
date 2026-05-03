@@ -1,6 +1,7 @@
 package com.practicum.playlistmaker.search.ui
 
 import android.os.Handler
+import android.os.Looper
 import android.os.SystemClock
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
@@ -9,10 +10,10 @@ import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.models.Track
 
 class SearchViewModel(
-    private val trackInteractor: TracksInteractor,
-    private val handler: Handler
+    private val trackInteractor: TracksInteractor
 ) : ViewModel() {
 
+    private val handler: Handler = Handler(Looper.getMainLooper())
     private var lastSearchText: String? = null
     private val stateLiveData = MutableLiveData<SearchState>()
 

@@ -2,6 +2,7 @@ package com.practicum.playlistmaker.player.ui
 
 import android.media.MediaPlayer
 import android.os.Handler
+import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
@@ -9,8 +10,7 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
-    private var mediaPlayer: MediaPlayer,
-    private var handler: Handler
+    private var mediaPlayer: MediaPlayer
 ) : ViewModel() {
 
     enum class PlayerState {
@@ -19,6 +19,7 @@ class PlayerViewModel(
         PAUSED
     }
 
+    private val handler: Handler = Handler(Looper.getMainLooper())
     private var playerState: PlayerState? = null
     private var timerTask: Runnable = createTimerTask()
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
