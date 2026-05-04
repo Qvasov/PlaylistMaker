@@ -1,10 +1,56 @@
 <?xml version="1.0" encoding="utf-8"?>
-<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
-    android:id="@+id/main"
+    android:id="@+id/library"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/activityBackgroundColor"
+    android:orientation="vertical"
     tools:context=".library.ui.LibraryActivity">
 
-</androidx.constraintlayout.widget.ConstraintLayout>
+    <androidx.constraintlayout.widget.ConstraintLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/panel_header_height"
+            android:padding="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrow_back"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/textView"
+            style="@style/headerTextStyle"
+            android:layout_marginLeft="@dimen/header_text_margin_horizontal"
+            android:text="@string/library"
+            app:layout_constraintBottom_toBottomOf="@+id/backButton"
+            app:layout_constraintStart_toEndOf="@+id/backButton"
+            app:layout_constraintTop_toTopOf="@+id/backButton" />
+
+    </androidx.constraintlayout.widget.ConstraintLayout>
+
+    <com.google.android.material.tabs.TabLayout
+        android:id="@+id/tabLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:background="@color/activityBackgroundColor"
+        app:layout_constraintTop_toBottomOf="@+id/backButton"
+        app:tabIndicator="@drawable/tab_indicator_fixed"
+        app:tabIndicatorColor="@color/tabTextColor"
+        app:tabTextColor="@color/tabTextColor" />
+
+    <androidx.viewpager2.widget.ViewPager2
+        android:id="@+id/pager"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        app:layout_constraintTop_toBottomOf="@+id/tabLayout" />
+
+</LinearLayout>
+
+
+
