@@ -1,28 +1,29 @@
 package com.practicum.playlistmaker.search.ui
 
-import android.content.Intent
+import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
 import android.os.Handler
 import android.os.Looper
 import android.text.TextWatcher
+import android.view.LayoutInflater
 import android.view.View
+import android.view.ViewGroup
 import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
-import androidx.activity.enableEdgeToEdge
-import androidx.appcompat.app.AppCompatActivity
-import androidx.core.view.ViewCompat
-import androidx.core.view.WindowInsetsCompat
 import androidx.core.widget.doOnTextChanged
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
-import com.practicum.playlistmaker.databinding.ActivitySearchBinding
-import com.practicum.playlistmaker.player.ui.PlayerActivity
+import com.practicum.playlistmaker.databinding.FragmentSearchBinding
+import com.practicum.playlistmaker.player.ui.PlayerFragment
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class SearchActivity : AppCompatActivity() {
-    private lateinit var binding: ActivitySearchBinding
+class SearchFragment : Fragment() {
+    private var _binding: FragmentSearchBinding? = null
+    private val binding get() = _binding!!
     private val viewModel: SearchViewModel by viewModel()
     private val gson: Gson by inject()
 
@@ -32,40 +33,36 @@ class SearchActivity : AppCompatActivity() {
     private val trackListAdapter = TrackAdapter {
         if (clickDebounce()) {
             viewModel.saveToHistory(it)
-            val playerIntent = Intent(this, PlayerActivity::class.java)
-            playerIntent.putExtra(PlayerActivity.TRACK, gson.toJson(it))
-            startActivity(playerIntent)
+            findNavController().navigate(
+                R.id.action_searchFragment_to_playerFragment,
+                PlayerFragment.createArgs(gson.toJson(it))
+            )
         }
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        binding = ActivitySearchBinding.inflate(layoutInflater)
-        setContentView(binding.root)
-        enableEdgeToEdge()
-        ViewCompat.setOnApplyWindowInsetsListener(binding.search) { v, insets ->
-            val systemBars = insets.getInsets(WindowInsetsCompat.Type.systemBars())
-            v.setPadding(systemBars.left, systemBars.top, systemBars.right, systemBars.bottom)
-            insets
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
+        super.onCreateView(inflater, container, savedInstanceState)
+        _binding = FragmentSearchBinding.inflate(inflater, container, false)
+        return binding.root
+    }
+
+    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
+        super.onViewCreated(view, savedInstanceState)
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            render(it)
         }
 
         binding.trackListView.adapter = trackListAdapter
 
-        viewModel.observeState().observe(this) {
-            render(it)
-        }
-
-        if (savedInstanceState != null) {
-            onSaveInstanceState(savedInstanceState)
-        }
-
-        binding.backButton.setOnClickListener {
-            onBackPressedDispatcher.onBackPressed()
-        }
-
         binding.clearIcon.setOnClickListener {
             binding.searchEditText.setText("")
-            val inputMethodManager = getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
+            val inputMethodManager =
+                requireContext().getSystemService(INPUT_METHOD_SERVICE) as? InputMethodManager
             inputMethodManager?.hideSoftInputFromWindow(binding.searchEditText.windowToken, 0)
             binding.searchEditText.clearFocus()
             viewModel.uploadHistory()
@@ -105,25 +102,30 @@ class SearchActivity : AppCompatActivity() {
         viewModel.uploadHistory()
     }
 
+    override fun onDestroyView() {
+        super.onDestroyView()
+        binding.searchEditText.removeTextChangedListener(textWatcher)
+    }
+
     override fun onDestroy() {
         super.onDestroy()
-        binding.searchEditText.removeTextChangedListener(textWatcher)
+        _binding = null
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
         super.onSaveInstanceState(outState)
-        outState.putString(SEARCH_EDITTEXT_TEXT, binding.searchEditText.text.toString())
+//        outState.putString(SEARCH_EDITTEXT_TEXT, binding.searchEditText.text.toString())
     }
 
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        binding.searchEditText.setText(
-            savedInstanceState.getString(
-                SEARCH_EDITTEXT_TEXT,
-                binding.searchEditText.text.toString()
-            )
-        )
-    }
+//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+//        super.onRestoreInstanceState(savedInstanceState)
+//        binding.searchEditText.setText(
+//            savedInstanceState.getString(
+//                SEARCH_EDITTEXT_TEXT,
+//                binding.searchEditText.text.toString()
+//            )
+//        )
+//    }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
@@ -169,8 +171,8 @@ class SearchActivity : AppCompatActivity() {
             binding.trackListView.visibility = View.GONE
             binding.alertLayout.visibility = View.VISIBLE
             binding.alertText.setText(getString(R.string.not_found))
-            Glide.with(applicationContext)
-                .load(getDrawable(R.drawable.not_found))
+            Glide.with(requireContext())
+                .load(resources.getDrawable(R.drawable.not_found, null))
                 .centerInside()
                 .into(binding.alertImage)
             binding.refreshButton.visibility = View.GONE
@@ -208,8 +210,8 @@ class SearchActivity : AppCompatActivity() {
                     + System.lineSeparator()
                     + getString(R.string.fail_download)
         )
-        Glide.with(applicationContext)
-            .load(getDrawable(R.drawable.connection_lost))
+        Glide.with(requireContext())
+            .load(resources.getDrawable(R.drawable.connection_lost, null))
             .centerInside()
             .into(binding.alertImage)
         binding.refreshButton.visibility = View.VISIBLE
@@ -219,7 +221,6 @@ class SearchActivity : AppCompatActivity() {
     }
 
     companion object {
-        const val SEARCH_EDITTEXT_TEXT = "SEARCH_EDITTEXT_TEXT"
         private const val CLICK_DEBOUNCE_DELAY = 1000L
     }
 }

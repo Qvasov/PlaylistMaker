@@ -7,7 +7,8 @@
     android:layout_height="match_parent"
     android:background="@color/activityBackgroundColor"
     android:fitsSystemWindows="true"
-    android:orientation="vertical">
+    android:orientation="vertical"
+    tools:context=".player.ui.PlayerFragment">
 
     <ImageView
         android:id="@+id/backButton"
@@ -24,7 +25,7 @@
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            tools:context=".player.ui.PlayerActivity">
+            tools:context=".player.ui.PlayerFragment">
 
             <androidx.constraintlayout.widget.Guideline
                 android:id="@+id/mainLeftBorder"

@@ -22,6 +22,7 @@
     <color name="buttonTextColor">@color/yp_white</color>
     <color name="tabTextColor">@color/yp_black</color>
     <color name="playListBackgroundButtonColor">@color/yp_background_grey</color>
+    <color name="switchColor">@color/yp_grey</color>
 
 
 </resources>
