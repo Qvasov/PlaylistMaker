@@ -26,15 +26,23 @@ class MainActivity : AppCompatActivity() {
             insets
         }
 
-        val navHostFragment = supportFragmentManager.findFragmentById(binding.containerView.id) as NavHostFragment
+        val navHostFragment =
+            supportFragmentManager.findFragmentById(binding.containerView.id) as NavHostFragment
         val navController = navHostFragment.navController
 
         binding.bottomNavigationView.setupWithNavController(navController)
 
         navController.addOnDestinationChangedListener { _, destination, _ ->
-            when(destination.id) {
-                R.id.playerFragment -> binding.bottomNavigationView.visibility = View.GONE
-                else -> binding.bottomNavigationView.visibility = View.VISIBLE
+            when (destination.id) {
+                R.id.playerFragment -> {
+                    binding.bottomNavigationView.visibility = View.GONE
+                    binding.border.visibility = View.GONE
+                }
+
+                else -> {
+                    binding.bottomNavigationView.visibility = View.VISIBLE
+                    binding.border.visibility = View.VISIBLE
+                }
             }
         }
     }

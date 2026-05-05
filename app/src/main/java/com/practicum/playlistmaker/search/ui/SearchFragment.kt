@@ -97,35 +97,13 @@ class SearchFragment : Fragment() {
         binding.historyClearButton.setOnClickListener {
             viewModel.clearHistory()
         }
-
-
-        viewModel.uploadHistory()
     }
 
     override fun onDestroyView() {
         super.onDestroyView()
         binding.searchEditText.removeTextChangedListener(textWatcher)
-    }
-
-    override fun onDestroy() {
-        super.onDestroy()
         _binding = null
     }
-
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-//        outState.putString(SEARCH_EDITTEXT_TEXT, binding.searchEditText.text.toString())
-    }
-
-//    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-//        super.onRestoreInstanceState(savedInstanceState)
-//        binding.searchEditText.setText(
-//            savedInstanceState.getString(
-//                SEARCH_EDITTEXT_TEXT,
-//                binding.searchEditText.text.toString()
-//            )
-//        )
-//    }
 
     private fun clickDebounce(): Boolean {
         val current = isClickAllowed
