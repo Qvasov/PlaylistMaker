@@ -121,4 +121,33 @@
         <item name="android:ellipsize">end</item>
         <item name="android:maxLines">1</item>
     </style>
+
+    <style name="itemTextAppearanceActiveBottomNavigationStyle">
+<!--        <item name="android:textSize">12sp</item>-->
+<!--        <item name="android:textColor">@color/yp_blue</item>-->
+<!--        <item name="itemTextColor">@color/yp_blue</item>-->
+<!--        <item name="android:padding">0dp</item>-->
+
+<!--        <item name="android:width">0dp</item>-->
+<!--        <item name="android:height">0dp</item>-->
+
+<!--        <item name="android:color">@color/yp_blue</item>-->
+<!--        <item name="color">@color/yp_blue</item>-->
+
+    </style>
+
+    <style name="bottomNavigationView" parent="Widget.MaterialComponents.BottomNavigationView">
+        <item name="android:background">@color/activityBackgroundColor</item>
+        <item name="itemIconTint">@color/selector</item>
+        <item name="itemTextColor">@color/selector</item>
+        <item name="itemTextAppearanceActive">@style/bottomNavigationViewItem</item>
+        <item name="itemTextAppearanceInactive">@style/bottomNavigationViewItem</item>
+        <item name="itemTextAppearanceActiveBoldEnabled">false</item>
+        <item name="itemRippleColor">@null</item>
+    </style>
+
+    <style name="bottomNavigationViewItem">
+        <item name="android:textSize">12sp</item>
+    </style>
+
 </resources>

@@ -7,32 +7,19 @@
     android:layout_height="match_parent"
     android:background="@color/activityBackgroundColor"
     android:orientation="vertical"
-    tools:context=".library.ui.LibraryActivity">
+    tools:context=".library.ui.LibraryFragment">
 
-    <androidx.constraintlayout.widget.ConstraintLayout
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
-
-        <ImageView
-            android:id="@+id/backButton"
-            android:layout_width="wrap_content"
-            android:layout_height="@dimen/panel_header_height"
-            android:padding="16dp"
-            android:scaleType="centerInside"
-            android:src="@drawable/arrow_back"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+    <LinearLayout
+        style="@style/headerLayoutStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
 
         <TextView
-            android:id="@+id/textView"
             style="@style/headerTextStyle"
             android:layout_marginLeft="@dimen/header_text_margin_horizontal"
-            android:text="@string/library"
-            app:layout_constraintBottom_toBottomOf="@+id/backButton"
-            app:layout_constraintStart_toEndOf="@+id/backButton"
-            app:layout_constraintTop_toTopOf="@+id/backButton" />
-
-    </androidx.constraintlayout.widget.ConstraintLayout>
+            android:text="@string/library" />
+    </LinearLayout>
 
     <com.google.android.material.tabs.TabLayout
         android:id="@+id/tabLayout"
