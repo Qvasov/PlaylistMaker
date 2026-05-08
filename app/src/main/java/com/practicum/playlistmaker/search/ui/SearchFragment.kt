@@ -2,8 +2,6 @@ package com.practicum.playlistmaker.search.ui
 
 import android.content.Context.INPUT_METHOD_SERVICE
 import android.os.Bundle
-import android.os.Handler
-import android.os.Looper
 import android.text.TextWatcher
 import android.view.LayoutInflater
 import android.view.View
@@ -12,12 +10,15 @@ import android.view.inputmethod.EditorInfo
 import android.view.inputmethod.InputMethodManager
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import com.bumptech.glide.Glide
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
+import com.practicum.playlistmaker.utils.debounce
+import kotlinx.coroutines.Job
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -27,18 +28,10 @@ class SearchFragment : Fragment() {
     private val viewModel: SearchViewModel by viewModel()
     private val gson: Gson by inject()
 
-    private val handler: Handler = Handler(Looper.getMainLooper())
-    private var isClickAllowed = true
     private var textWatcher: TextWatcher? = null
-    private val trackListAdapter = TrackAdapter {
-        if (clickDebounce()) {
-            viewModel.saveToHistory(it)
-            findNavController().navigate(
-                R.id.action_searchFragment_to_playerFragment,
-                PlayerFragment.createArgs(gson.toJson(it))
-            )
-        }
-    }
+    private var isClickAllowed = true
+    private lateinit var changeTrackClickStatusOn: (Boolean, Long) -> Job?
+    private lateinit var trackListAdapter: TrackAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -57,6 +50,20 @@ class SearchFragment : Fragment() {
             render(it)
         }
 
+        changeTrackClickStatusOn = debounce(lifecycleScope, false) { status ->
+            isClickAllowed = status
+        }
+        trackListAdapter = TrackAdapter {
+            if (isClickAllowed) {
+                isClickAllowed = false
+                viewModel.saveToHistory(it)
+                findNavController().navigate(
+                    R.id.action_searchFragment_to_playerFragment,
+                    PlayerFragment.createArgs(gson.toJson(it))
+                )
+                changeTrackClickStatusOn(true, CLICK_DEBOUNCE_DELAY)
+            }
+        }
         binding.trackListView.adapter = trackListAdapter
 
         binding.clearIcon.setOnClickListener {
@@ -102,16 +109,8 @@ class SearchFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         binding.searchEditText.removeTextChangedListener(textWatcher)
+        binding.trackListView.adapter = null
         _binding = null
-    }
-
-    private fun clickDebounce(): Boolean {
-        val current = isClickAllowed
-        if (isClickAllowed) {
-            isClickAllowed = false
-            handler.postDelayed({ isClickAllowed = true }, CLICK_DEBOUNCE_DELAY)
-        }
-        return current
     }
 
     private fun clearButtonVisibility(s: CharSequence?): Int {

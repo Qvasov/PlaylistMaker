@@ -51,6 +51,11 @@ class PlayerFragment : Fragment() {
                     binding.playPauseButton.setImageResource(R.drawable.play_button)
                 }
 
+                PlayerViewModel.PlayerState.DEFAULT -> {
+                    binding.playPauseButton.isEnabled = false
+                    binding.playPauseButton.setImageResource(0)
+                }
+
                 else -> {}
             }
         }
