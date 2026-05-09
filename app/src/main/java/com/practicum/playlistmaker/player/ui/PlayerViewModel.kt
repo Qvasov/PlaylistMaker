@@ -1,11 +1,14 @@
 package com.practicum.playlistmaker.player.ui
 
 import android.media.MediaPlayer
-import android.os.Handler
-import android.os.Looper
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.player.domain.PlayerState
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 import java.text.SimpleDateFormat
 import java.util.Locale
 
@@ -13,15 +16,8 @@ class PlayerViewModel(
     private var mediaPlayer: MediaPlayer
 ) : ViewModel() {
 
-    enum class PlayerState {
-        PREPARED,
-        PLAYING,
-        PAUSED
-    }
-
-    private val handler: Handler = Handler(Looper.getMainLooper())
     private var playerState: PlayerState? = null
-    private var timerTask: Runnable = createTimerTask()
+    private var timerJob: Job? = null
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
 
@@ -33,8 +29,9 @@ class PlayerViewModel(
 
     override fun onCleared() {
         super.onCleared()
-        handler.removeCallbacks(timerTask)
+        timerJob?.cancel()
         mediaPlayer.release()
+        stateLiveData.postValue(PlayerState.DEFAULT)
     }
 
     fun preparePlayer(previewUrl: String) {
@@ -46,7 +43,7 @@ class PlayerViewModel(
             stateLiveData.postValue(PlayerState.PREPARED)
         }
         mediaPlayer.setOnCompletionListener {
-            handler.removeCallbacks(timerTask)
+            timerJob?.cancel()
             timerLiveData.postValue(START_TIME)
             playerState = PlayerState.PREPARED
             stateLiveData.postValue(PlayerState.PREPARED)
@@ -55,14 +52,14 @@ class PlayerViewModel(
 
     fun startPlayer() {
         mediaPlayer.start()
-        handler.post(timerTask)
+        startTimer()
         playerState = PlayerState.PLAYING
         stateLiveData.postValue(PlayerState.PLAYING)
     }
 
     fun pausePlayer() {
         mediaPlayer.pause()
-        handler.removeCallbacks(timerTask)
+        timerJob?.cancel()
         playerState = PlayerState.PAUSED
         stateLiveData.postValue(PlayerState.PAUSED)
     }
@@ -75,12 +72,12 @@ class PlayerViewModel(
         }
     }
 
-    private fun createTimerTask(): Runnable {
-        return object : Runnable {
-            override fun run() {
+    private fun startTimer( ) {
+        timerJob = viewModelScope.launch {
+            while(mediaPlayer.isPlaying) {
+                delay(TIMER_DELAY)
                 val elapsedTime = dateFormat.format(mediaPlayer.currentPosition)
                 timerLiveData.postValue(elapsedTime)
-                handler.postDelayed(this, TIMER_DELAY)
             }
         }
     }
