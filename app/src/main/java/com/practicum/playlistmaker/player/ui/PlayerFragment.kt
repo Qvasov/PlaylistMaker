@@ -12,6 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
+import com.practicum.playlistmaker.player.domain.PlayerState
 import com.practicum.playlistmaker.search.domain.models.Track
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -38,20 +39,20 @@ class PlayerFragment : Fragment() {
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             when (it) {
-                PlayerViewModel.PlayerState.PREPARED -> {
+                PlayerState.PREPARED -> {
                     binding.playPauseButton.isEnabled = true
                     binding.playPauseButton.setImageResource(R.drawable.play_button)
                 }
 
-                PlayerViewModel.PlayerState.PLAYING -> {
+                PlayerState.PLAYING -> {
                     binding.playPauseButton.setImageResource(R.drawable.pause_button)
                 }
 
-                PlayerViewModel.PlayerState.PAUSED -> {
+                PlayerState.PAUSED -> {
                     binding.playPauseButton.setImageResource(R.drawable.play_button)
                 }
 
-                PlayerViewModel.PlayerState.DEFAULT -> {
+                PlayerState.DEFAULT -> {
                     binding.playPauseButton.isEnabled = false
                     binding.playPauseButton.setImageResource(0)
                 }

@@ -5,6 +5,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.player.domain.PlayerState
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -14,13 +15,6 @@ import java.util.Locale
 class PlayerViewModel(
     private var mediaPlayer: MediaPlayer
 ) : ViewModel() {
-
-    enum class PlayerState {
-        PREPARED,
-        PLAYING,
-        PAUSED,
-        DEFAULT
-    }
 
     private var playerState: PlayerState? = null
     private var timerJob: Job? = null
