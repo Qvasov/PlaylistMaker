@@ -12,7 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
-import com.practicum.playlistmaker.player.domain.PlayerState
+import com.practicum.playlistmaker.player.domain.MediaPlayerState
 import com.practicum.playlistmaker.search.domain.models.Track
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -37,41 +37,6 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        viewModel.observeState().observe(viewLifecycleOwner) {
-            when (it) {
-                PlayerState.PREPARED -> {
-                    binding.playPauseButton.isEnabled = true
-                    binding.playPauseButton.setImageResource(R.drawable.play_button)
-                }
-
-                PlayerState.PLAYING -> {
-                    binding.playPauseButton.setImageResource(R.drawable.pause_button)
-                }
-
-                PlayerState.PAUSED -> {
-                    binding.playPauseButton.setImageResource(R.drawable.play_button)
-                }
-
-                PlayerState.DEFAULT -> {
-                    binding.playPauseButton.isEnabled = false
-                    binding.playPauseButton.setImageResource(0)
-                }
-
-                else -> {}
-            }
-        }
-        viewModel.observeTimer().observe(viewLifecycleOwner) {
-            binding.playTime.text = it
-        }
-
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
-        }
-
-        binding.playPauseButton.setOnClickListener {
-            viewModel.playbackControl()
-        }
-
         val track = gson.fromJson(requireArguments().getString(TRACK), Track::class.java)
         Glide.with(this)
             .load(track.artworkUrl100)
@@ -79,6 +44,7 @@ class PlayerFragment : Fragment() {
             .fitCenter()
             .transform(RoundedCorners((resources.displayMetrics.density * 8 + 0.5f).toInt()))
             .into(binding.coverArtwork)
+
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
         binding.playTime.text = START_TIME
@@ -87,8 +53,19 @@ class PlayerFragment : Fragment() {
         binding.releaseDate.text = track.releaseDate
         binding.primaryGenreName.text = track.primaryGenreName
         binding.country.text = track.country
+        updateLikeButtonState(track.isFavorite)
 
-        viewModel.preparePlayer(track.previewUrl)
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+        binding.playPauseButton.setOnClickListener { viewModel.playbackControl() }
+        binding.likeButton.setOnClickListener { viewModel.onLikeClicked(track) }
+
+        viewModel.preparePlayer(track.previewUrl, track.isFavorite)
+
+        viewModel.observeState().observe(viewLifecycleOwner) {
+            if (it.mediaPlayerState != null) updateMediaPlayerState(it.mediaPlayerState!!)
+            if (it.timerText != null) updateTimer(it.timerText!!)
+            if (it.isFavorite != null) updateLikeButtonState(it.isFavorite!!)
+        }
     }
 
     override fun onPause() {
@@ -99,6 +76,37 @@ class PlayerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun updateMediaPlayerState(mediaPlayerState: MediaPlayerState) {
+        when (mediaPlayerState) {
+            MediaPlayerState.PREPARED -> {
+                binding.playPauseButton.isEnabled = true
+                binding.playPauseButton.setImageResource(R.drawable.play_button)
+            }
+
+            MediaPlayerState.PLAYING -> {
+                binding.playPauseButton.setImageResource(R.drawable.pause_button)
+            }
+
+            MediaPlayerState.PAUSED -> {
+                binding.playPauseButton.setImageResource(R.drawable.play_button)
+            }
+
+            MediaPlayerState.DEFAULT -> {
+                binding.playPauseButton.isEnabled = false
+                binding.playPauseButton.setImageResource(0)
+            }
+        }
+    }
+
+    private fun updateTimer(timerText: String) {
+        binding.playTime.text = timerText
+    }
+
+    private fun updateLikeButtonState(isFavorite: Boolean) {
+        if (isFavorite) binding.likeButton.setImageResource(R.drawable.like_button)
+        else binding.likeButton.setImageResource(R.drawable.unlike_button)
     }
 
     companion object {

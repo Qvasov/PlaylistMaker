@@ -5,7 +5,10 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.library.domain.api.FavoritesInteractor
+import com.practicum.playlistmaker.player.domain.MediaPlayerState
 import com.practicum.playlistmaker.player.domain.PlayerState
+import com.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
@@ -13,72 +16,82 @@ import java.text.SimpleDateFormat
 import java.util.Locale
 
 class PlayerViewModel(
-    private var mediaPlayer: MediaPlayer
+    private var mediaPlayer: MediaPlayer,
+    private val favoritesInteractor: FavoritesInteractor
 ) : ViewModel() {
 
-    private var playerState: PlayerState? = null
+    private var mediaPlayerState: MediaPlayerState? = null
     private var timerJob: Job? = null
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
-
     private val stateLiveData = MutableLiveData<PlayerState>()
     fun observeState(): LiveData<PlayerState> = stateLiveData
-
-    private val timerLiveData = MutableLiveData<String>()
-    fun observeTimer(): LiveData<String> = timerLiveData
 
     override fun onCleared() {
         super.onCleared()
         timerJob?.cancel()
         mediaPlayer.release()
-        stateLiveData.postValue(PlayerState.DEFAULT)
+        mediaPlayerState = MediaPlayerState.DEFAULT
+        stateLiveData.postValue(PlayerState(mediaPlayerState))
     }
 
-    fun preparePlayer(previewUrl: String) {
+    fun preparePlayer(previewUrl: String, isFavorite: Boolean) {
         mediaPlayer.setDataSource(previewUrl)
         mediaPlayer.prepareAsync()
+        mediaPlayerState = MediaPlayerState.PREPARED
         mediaPlayer.setOnPreparedListener {
-            timerLiveData.postValue(START_TIME)
-            playerState = PlayerState.PREPARED
-            stateLiveData.postValue(PlayerState.PREPARED)
+            stateLiveData.postValue(PlayerState(mediaPlayerState, START_TIME, isFavorite))
         }
+
         mediaPlayer.setOnCompletionListener {
             timerJob?.cancel()
-            timerLiveData.postValue(START_TIME)
-            playerState = PlayerState.PREPARED
-            stateLiveData.postValue(PlayerState.PREPARED)
+            mediaPlayerState = MediaPlayerState.PREPARED
+            stateLiveData.postValue(PlayerState(mediaPlayerState, START_TIME))
         }
     }
 
     fun startPlayer() {
         mediaPlayer.start()
+        mediaPlayerState = MediaPlayerState.PLAYING
+        stateLiveData.postValue(PlayerState(mediaPlayerState))
         startTimer()
-        playerState = PlayerState.PLAYING
-        stateLiveData.postValue(PlayerState.PLAYING)
     }
 
     fun pausePlayer() {
         mediaPlayer.pause()
         timerJob?.cancel()
-        playerState = PlayerState.PAUSED
-        stateLiveData.postValue(PlayerState.PAUSED)
+        mediaPlayerState = MediaPlayerState.PAUSED
+        stateLiveData.postValue(PlayerState(mediaPlayerState))
     }
 
     fun playbackControl() {
-        when (playerState) {
-            PlayerState.PLAYING -> pausePlayer()
-            PlayerState.PREPARED, PlayerState.PAUSED -> startPlayer()
+        when (mediaPlayerState) {
+            MediaPlayerState.PLAYING -> pausePlayer()
+            MediaPlayerState.PREPARED, MediaPlayerState.PAUSED -> startPlayer()
             else -> {}
         }
     }
 
-    private fun startTimer( ) {
+    private fun startTimer() {
         timerJob = viewModelScope.launch {
-            while(mediaPlayer.isPlaying) {
+            while (mediaPlayer.isPlaying) {
                 delay(TIMER_DELAY)
                 val elapsedTime = dateFormat.format(mediaPlayer.currentPosition)
-                timerLiveData.postValue(elapsedTime)
+                stateLiveData.postValue(PlayerState(timerText = elapsedTime))
             }
+        }
+    }
+
+    fun onLikeClicked(track: Track) {
+        viewModelScope.launch {
+            if (track.isFavorite) {
+                track.isFavorite = false
+                favoritesInteractor.deleteTrack(track)
+            } else {
+                track.isFavorite = true
+                favoritesInteractor.addTrack(track)
+            }
+            stateLiveData.postValue(PlayerState(isFavorite = track.isFavorite))
         }
     }
 

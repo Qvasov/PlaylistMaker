@@ -17,6 +17,7 @@ import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentSearchBinding
 import com.practicum.playlistmaker.player.ui.PlayerFragment
+import com.practicum.playlistmaker.search.domain.SearchState
 import com.practicum.playlistmaker.utils.debounce
 import kotlinx.coroutines.Job
 import org.koin.android.ext.android.inject
