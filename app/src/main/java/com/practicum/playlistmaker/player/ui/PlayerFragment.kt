@@ -37,6 +37,34 @@ class PlayerFragment : Fragment() {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
+        val track = gson.fromJson(requireArguments().getString(TRACK), Track::class.java)
+        Glide.with(this)
+            .load(track.artworkUrl100)
+            .placeholder(R.drawable.album_place_holder)
+            .fitCenter()
+            .transform(RoundedCorners((resources.displayMetrics.density * 8 + 0.5f).toInt()))
+            .into(binding.coverArtwork)
+
+        binding.trackName.text = track.trackName
+        binding.artistName.text = track.artistName
+        binding.playTime.text = START_TIME
+        binding.trackTime.text = track.trackTime
+        binding.collectionName.text = track.collectionName
+        binding.releaseDate.text = track.releaseDate
+        binding.primaryGenreName.text = track.primaryGenreName
+        binding.country.text = track.country
+        if (track.isFavorite)
+            binding.likeButton.setImageResource(R.drawable.like_button)
+        else
+            binding.likeButton.setImageResource(R.drawable.unlike_button)
+
+        binding.backButton.setOnClickListener { findNavController().navigateUp() }
+        binding.playPauseButton.setOnClickListener { viewModel.playbackControl() }
+        binding.likeButton.setOnClickListener { viewModel.onLikeClicked(track) }
+
+        viewModel.preparePlayer(track.previewUrl)
+
+
         viewModel.observeState().observe(viewLifecycleOwner) {
             when (it) {
                 PlayerState.PREPARED -> {
@@ -63,32 +91,10 @@ class PlayerFragment : Fragment() {
         viewModel.observeTimer().observe(viewLifecycleOwner) {
             binding.playTime.text = it
         }
-
-        binding.backButton.setOnClickListener {
-            findNavController().navigateUp()
+        viewModel.observeLikeButton().observe(viewLifecycleOwner) { isFavorite ->
+            if (isFavorite) binding.likeButton.setImageResource(R.drawable.like_button)
+            else binding.likeButton.setImageResource(R.drawable.unlike_button)
         }
-
-        binding.playPauseButton.setOnClickListener {
-            viewModel.playbackControl()
-        }
-
-        val track = gson.fromJson(requireArguments().getString(TRACK), Track::class.java)
-        Glide.with(this)
-            .load(track.artworkUrl100)
-            .placeholder(R.drawable.album_place_holder)
-            .fitCenter()
-            .transform(RoundedCorners((resources.displayMetrics.density * 8 + 0.5f).toInt()))
-            .into(binding.coverArtwork)
-        binding.trackName.text = track.trackName
-        binding.artistName.text = track.artistName
-        binding.playTime.text = START_TIME
-        binding.trackTime.text = track.trackTime
-        binding.collectionName.text = track.collectionName
-        binding.releaseDate.text = track.releaseDate
-        binding.primaryGenreName.text = track.primaryGenreName
-        binding.country.text = track.country
-
-        viewModel.preparePlayer(track.previewUrl)
     }
 
     override fun onPause() {

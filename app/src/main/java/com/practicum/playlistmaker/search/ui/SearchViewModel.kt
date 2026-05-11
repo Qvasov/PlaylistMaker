@@ -4,6 +4,7 @@ import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.practicum.playlistmaker.search.domain.SearchState
 import com.practicum.playlistmaker.search.domain.api.TracksInteractor
 import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.utils.debounce
@@ -11,12 +12,12 @@ import kotlinx.coroutines.Job
 import kotlinx.coroutines.launch
 
 class SearchViewModel(
-    private val trackInteractor: TracksInteractor
+    private val trackInteractor: TracksInteractor,
 ) : ViewModel() {
 
     private var lastSearchText: String? = null
-    private val trackSearchDebounce = debounce<String>(viewModelScope, true) {
-        searchText -> search(searchText)
+    private val trackSearchDebounce = debounce<String>(viewModelScope, true) { searchText ->
+        search(searchText)
     }
     private var trackSearchJob: Job? = null
 
@@ -74,7 +75,7 @@ class SearchViewModel(
         trackSearchJob?.cancel()
         viewModelScope.launch {
             trackInteractor.getHistory()
-                .collect {foundTracks ->
+                .collect { foundTracks ->
                     val tracks = mutableListOf<Track>()
                     foundTracks?.let { tracks.addAll(it) }
                     renderState(SearchState.History(tracks))

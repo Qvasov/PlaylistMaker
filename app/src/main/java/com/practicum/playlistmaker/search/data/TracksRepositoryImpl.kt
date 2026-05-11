@@ -1,61 +1,79 @@
 package com.practicum.playlistmaker.search.data
 
+import com.practicum.playlistmaker.library.data.db.AppDatabase
+import com.practicum.playlistmaker.search.data.converters.TrackHistoryConverter
+import com.practicum.playlistmaker.search.data.dto.TrackHistoryDto
 import com.practicum.playlistmaker.search.data.dto.iTunesApiRequest
 import com.practicum.playlistmaker.search.data.dto.iTunesApiResponse
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 import com.practicum.playlistmaker.search.domain.models.Track
-import kotlinx.coroutines.GlobalScope
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.flow
-import kotlinx.coroutines.launch
 
 class TracksRepositoryImpl(
     private val networkClient: NetworkClient,
-    private val storageClient: StorageClient<ArrayList<Track>>
+    private val storageClient: StorageClient<ArrayList<TrackHistoryDto>>,
+    private val appDatabase: AppDatabase,
+    private val trackHistoryConverter: TrackHistoryConverter
 ) : TracksRepository {
     override fun search(expression: String): Flow<List<Track>?> = flow {
         val response = networkClient.doRequest(iTunesApiRequest(expression))
-        if (response.resultCode == 200) {
-            val data = (response as iTunesApiResponse).results.map {
-                Track(
-                    it.trackId,
-                    it.trackName,
-                    it.artistName,
-                    it.getSimpleTrackTime(),
-                    it.getCoverArtwork(),
-                    it.collectionName,
-                    it.getReleaseYear(),
-                    it.primaryGenreName,
-                    it.country,
-                    it.previewUrl
-                )
+        when (response.resultCode) {
+            200 -> {
+                val favoritesTracks = appDatabase.trackDao().getTrackIds()
+                val data = (response as iTunesApiResponse).results.map {
+                    Track(
+                        it.trackId,
+                        it.trackName,
+                        it.artistName,
+                        it.getSimpleTrackTime(),
+                        it.getCoverArtwork(),
+                        it.collectionName,
+                        it.getReleaseYear(),
+                        it.primaryGenreName,
+                        it.country,
+                        it.previewUrl,
+                        favoritesTracks.contains(it.trackId)
+                    )
+                }
+                emit(data)
             }
-            emit(data)
-        } else if (response.resultCode == 404) {
-            emit(emptyList())
-        } else {
-            emit(null)
+            404 -> {
+                emit(emptyList())
+            }
+            else -> {
+                emit(null)
+            }
         }
     }
 
-    override fun saveToHistory(track: Track) {
-        GlobalScope.launch {
-            val historyTrackList = storageClient.getData() ?: ArrayList()
-            if (historyTrackList.remove(track) || historyTrackList.size < 10) {
-                historyTrackList.add(track)
-            } else {
-                historyTrackList.removeAt(0)
-                historyTrackList.add(track)
-            }
+    override suspend fun saveToHistory(track: Track) {
+        val trackHistoryDto = trackHistoryConverter.mapToTrackHistoryDto(track)
+        val historyTrackList = storageClient.getData() ?: ArrayList()
+        if (historyTrackList.remove(trackHistoryDto) || historyTrackList.size < 10) {
+            historyTrackList.add(trackHistoryDto)
+        } else {
+            historyTrackList.removeAt(0)
+            historyTrackList.add(trackHistoryDto)
+        }
 
-            storageClient.storeData(historyTrackList) }
+        storageClient.storeData(historyTrackList)
     }
 
     override fun getHistory(): Flow<List<Track>?> = flow {
-        emit(storageClient.getData()?.reversed()?.toMutableList())
+        val favoritesTracks = appDatabase.trackDao().getTrackIds()
+        emit(storageClient.getData()
+            ?.map {
+                val track = trackHistoryConverter.mapToTrack(it)
+                track.isFavorite = favoritesTracks.contains(track.trackId)
+                track
+            }
+            ?.reversed()
+            ?.toMutableList()
+        )
     }
 
-    override fun clearHistory() {
-        GlobalScope.launch { storageClient.clearData() }
+    override suspend fun clearHistory() {
+        storageClient.clearData()
     }
 }

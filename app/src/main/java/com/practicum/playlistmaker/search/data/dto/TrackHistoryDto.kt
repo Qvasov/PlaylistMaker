@@ -1,6 +1,6 @@
-package com.practicum.playlistmaker.search.domain.models
+package com.practicum.playlistmaker.search.data.dto
 
-data class Track(
+data class TrackHistoryDto(
     val trackId: Long,
     val trackName: String,
     val artistName: String,
@@ -11,9 +11,4 @@ data class Track(
     val primaryGenreName: String,
     val country: String,
     val previewUrl: String,
-    var isFavorite: Boolean = false
-) {
-    override fun equals(other: Any?): Boolean {
-        return super.equals(other)
-    }
-}
+)

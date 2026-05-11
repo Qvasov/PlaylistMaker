@@ -125,7 +125,7 @@
                 android:layout_height="0dp"
                 android:layout_marginStart="55dp"
                 android:background="@drawable/round_button"
-                android:src="@drawable/like_button"
+                android:src="@drawable/unlike_button"
                 app:layout_constraintBottom_toBottomOf="@id/playPauseButton"
                 app:layout_constraintDimensionRatio="h,1:1"
                 app:layout_constraintStart_toEndOf="@+id/playPauseButton"
