@@ -12,7 +12,7 @@ import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlayerBinding
-import com.practicum.playlistmaker.player.domain.PlayerState
+import com.practicum.playlistmaker.player.domain.MediaPlayerState
 import com.practicum.playlistmaker.search.domain.models.Track
 import org.koin.android.ext.android.inject
 import org.koin.androidx.viewmodel.ext.android.viewModel
@@ -53,47 +53,18 @@ class PlayerFragment : Fragment() {
         binding.releaseDate.text = track.releaseDate
         binding.primaryGenreName.text = track.primaryGenreName
         binding.country.text = track.country
-        if (track.isFavorite)
-            binding.likeButton.setImageResource(R.drawable.like_button)
-        else
-            binding.likeButton.setImageResource(R.drawable.unlike_button)
+        updateLikeButtonState(track.isFavorite)
 
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         binding.playPauseButton.setOnClickListener { viewModel.playbackControl() }
         binding.likeButton.setOnClickListener { viewModel.onLikeClicked(track) }
 
-        viewModel.preparePlayer(track.previewUrl)
-
+        viewModel.preparePlayer(track.previewUrl, track.isFavorite)
 
         viewModel.observeState().observe(viewLifecycleOwner) {
-            when (it) {
-                PlayerState.PREPARED -> {
-                    binding.playPauseButton.isEnabled = true
-                    binding.playPauseButton.setImageResource(R.drawable.play_button)
-                }
-
-                PlayerState.PLAYING -> {
-                    binding.playPauseButton.setImageResource(R.drawable.pause_button)
-                }
-
-                PlayerState.PAUSED -> {
-                    binding.playPauseButton.setImageResource(R.drawable.play_button)
-                }
-
-                PlayerState.DEFAULT -> {
-                    binding.playPauseButton.isEnabled = false
-                    binding.playPauseButton.setImageResource(0)
-                }
-
-                else -> {}
-            }
-        }
-        viewModel.observeTimer().observe(viewLifecycleOwner) {
-            binding.playTime.text = it
-        }
-        viewModel.observeLikeButton().observe(viewLifecycleOwner) { isFavorite ->
-            if (isFavorite) binding.likeButton.setImageResource(R.drawable.like_button)
-            else binding.likeButton.setImageResource(R.drawable.unlike_button)
+            if (it.mediaPlayerState != null) updateMediaPlayerState(it.mediaPlayerState!!)
+            if (it.timerText != null) updateTimer(it.timerText!!)
+            if (it.isFavorite != null) updateLikeButtonState(it.isFavorite!!)
         }
     }
 
@@ -105,6 +76,37 @@ class PlayerFragment : Fragment() {
     override fun onDestroyView() {
         super.onDestroyView()
         _binding = null
+    }
+
+    private fun updateMediaPlayerState(mediaPlayerState: MediaPlayerState) {
+        when (mediaPlayerState) {
+            MediaPlayerState.PREPARED -> {
+                binding.playPauseButton.isEnabled = true
+                binding.playPauseButton.setImageResource(R.drawable.play_button)
+            }
+
+            MediaPlayerState.PLAYING -> {
+                binding.playPauseButton.setImageResource(R.drawable.pause_button)
+            }
+
+            MediaPlayerState.PAUSED -> {
+                binding.playPauseButton.setImageResource(R.drawable.play_button)
+            }
+
+            MediaPlayerState.DEFAULT -> {
+                binding.playPauseButton.isEnabled = false
+                binding.playPauseButton.setImageResource(0)
+            }
+        }
+    }
+
+    private fun updateTimer(timerText: String) {
+        binding.playTime.text = timerText
+    }
+
+    private fun updateLikeButtonState(isFavorite: Boolean) {
+        if (isFavorite) binding.likeButton.setImageResource(R.drawable.like_button)
+        else binding.likeButton.setImageResource(R.drawable.unlike_button)
     }
 
     companion object {

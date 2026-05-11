@@ -5,7 +5,7 @@ import com.practicum.playlistmaker.library.data.db.converters.TrackDbConverter
 import com.practicum.playlistmaker.library.domain.api.FavoritesRepository
 import com.practicum.playlistmaker.search.domain.models.Track
 import kotlinx.coroutines.flow.Flow
-import kotlinx.coroutines.flow.flow
+import kotlinx.coroutines.flow.map
 
 class FavoritesRepositoryImpl(
     private val appDatabase: AppDatabase,
@@ -20,9 +20,12 @@ class FavoritesRepositoryImpl(
         appDatabase.trackDao().deleteTrack(trackDbConverter.toTrackEntity(track))
     }
 
-    override suspend fun getAllTracks(): Flow<List<Track>> = flow {
-        emit(appDatabase.trackDao().getTracks()
-            .sortedByDescending { it.addTimestamp }
-            .map { trackDbConverter.toTrack(it) })
+    override suspend fun getAllTracks(): Flow<List<Track>> {
+        return appDatabase.trackDao().getTracks()
+            .map { trackEntityList ->
+                trackEntityList
+                    .sortedByDescending { trackEntity -> trackEntity.addTimestamp }
+                    .map { trackEntity -> trackDbConverter.toTrack(trackEntity) }
+            }
     }
 }
