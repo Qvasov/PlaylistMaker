@@ -70,5 +70,9 @@
     <string name="releaseDate">Год</string>
     <string name="primaryGenreName">Жанр</string>
     <string name="country">Страна</string>
+    <string name="description">Описание</string>
+    <string name="playlist_name">Название*</string>
+    <string name="Create">Создать</string>
+    <string name="AddToPlaylist">Добавить в плейлист</string>
 
 </resources>

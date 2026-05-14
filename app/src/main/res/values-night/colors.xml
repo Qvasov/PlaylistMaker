@@ -12,5 +12,6 @@
     <color name="tabTextColor">@color/yp_white</color>
     <color name="playListBackgroundButtonColor">@color/yp_background_white</color>
     <color name="switchColor">@color/yp_blue</color>
+    <color name="sheetColor">@color/yp_white</color>
 
 </resources>
