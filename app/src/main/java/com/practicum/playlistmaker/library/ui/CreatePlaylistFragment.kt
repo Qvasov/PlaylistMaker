@@ -10,6 +10,7 @@ import android.widget.Toast
 import androidx.activity.addCallback
 import androidx.activity.result.PickVisualMediaRequest
 import androidx.activity.result.contract.ActivityResultContracts
+import androidx.core.content.ContextCompat
 import androidx.core.widget.doOnTextChanged
 import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
@@ -17,6 +18,7 @@ import com.bumptech.glide.Glide
 import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.google.android.material.dialog.MaterialAlertDialogBuilder
+import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
@@ -74,6 +76,13 @@ class CreatePlaylistFragment : Fragment() {
         }
 
 
+        binding.nameEditText.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                binding.nameEditTextHint.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.yp_blue))
+            } else {
+                binding.nameEditTextHint.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.yp_grey))
+            }
+        }
         nameTextWatcher = binding.nameEditText.doOnTextChanged { text, _, _, _ ->
             if (!text.isNullOrEmpty()) {
                 binding.nameEditTextHint.visibility = View.VISIBLE
@@ -84,6 +93,14 @@ class CreatePlaylistFragment : Fragment() {
             }
         }
 
+
+        binding.descriptionEditText.setOnFocusChangeListener { v, hasFocus ->
+            if (hasFocus) {
+                binding.descriptionEditTextHint.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.yp_blue))
+            } else {
+                binding.descriptionEditTextHint.setHintTextColor(ContextCompat.getColor(requireContext(), R.color.yp_grey))
+            }
+        }
         descriptionTextWatcher = binding.descriptionEditText.doOnTextChanged { text, _, _, _ ->
             if (!text.isNullOrEmpty()) {
                 binding.descriptionEditTextHint.visibility = View.VISIBLE

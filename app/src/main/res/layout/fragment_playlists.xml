@@ -19,7 +19,7 @@
 
     <Button
         android:id="@+id/newPlaylistButton"
-        android:layout_width="133dp"
+        android:layout_width="wrap_content"
         android:layout_height="36dp"
         android:layout_gravity="center"
         android:layout_marginTop="24dp"
@@ -27,7 +27,7 @@
         android:fontFamily="@font/ys_display_medium"
         android:insetTop="0dp"
         android:insetBottom="0dp"
-        android:padding="6dp"
+        android:paddingHorizontal="14dp"
         android:text="@string/new_playlist"
         android:textColor="@color/buttonTextColor"
         android:textFontWeight="@integer/text_font_weight_medium"
