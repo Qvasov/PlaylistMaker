@@ -24,14 +24,14 @@ class TracksRepositoryImpl(
                 val data = (response as iTunesApiResponse).results.map {
                     Track(
                         it.trackId,
-                        it.trackName,
-                        it.artistName,
+                        it.trackName.trim(),
+                        it.artistName.trim(),
                         it.getSimpleTrackTime(),
                         it.getCoverArtwork(),
-                        it.collectionName,
+                        it.collectionName.trim(),
                         it.getReleaseYear(),
-                        it.primaryGenreName,
-                        it.country,
+                        it.primaryGenreName.trim(),
+                        it.country.trim(),
                         it.previewUrl,
                         favoritesTracks.contains(it.trackId)
                     )

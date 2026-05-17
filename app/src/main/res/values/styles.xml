@@ -150,4 +150,9 @@
         <item name="android:textSize">12sp</item>
     </style>
 
+    <style name="tabLayoutTextStyle">
+        <item name="android:textFontWeight">@integer/text_font_weight_medium</item>
+        <item name="android:textSize">14sp</item>
+    </style>
+
 </resources>

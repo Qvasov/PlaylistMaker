@@ -1,7 +1,9 @@
 package com.practicum.playlistmaker.di
 
 import com.practicum.playlistmaker.library.data.FavoritesRepositoryImpl
+import com.practicum.playlistmaker.library.data.PlaylistsRepositoryImpl
 import com.practicum.playlistmaker.library.domain.api.FavoritesRepository
+import com.practicum.playlistmaker.library.domain.api.PlaylistsRepository
 import com.practicum.playlistmaker.search.data.TracksRepositoryImpl
 import com.practicum.playlistmaker.search.domain.api.TracksRepository
 import com.practicum.playlistmaker.settings.data.SettingsRepositoryImpl
@@ -28,5 +30,9 @@ val repositoryModule = module {
 
     single<FavoritesRepository> {
         FavoritesRepositoryImpl(get(), get())
+    }
+
+    single<PlaylistsRepository> {
+        PlaylistsRepositoryImpl(get(), get())
     }
 }

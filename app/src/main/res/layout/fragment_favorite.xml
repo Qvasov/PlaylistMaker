@@ -56,7 +56,8 @@
             android:paddingHorizontal="24dp"
             android:text="@string/empty_library"
             android:textAlignment="center"
-            android:textSize="@dimen/alertTextSize" />
+            android:textSize="@dimen/alertTextSize"
+            android:textFontWeight="500"/>
 
 
     </LinearLayout>

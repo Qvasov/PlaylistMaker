@@ -10,7 +10,7 @@ import androidx.navigation.fragment.findNavController
 import com.google.gson.Gson
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentFavoriteBinding
-import com.practicum.playlistmaker.library.domain.LibraryState
+import com.practicum.playlistmaker.library.domain.FavoritesState
 import com.practicum.playlistmaker.player.ui.PlayerFragment
 import com.practicum.playlistmaker.utils.debounce
 import kotlinx.coroutines.Job
@@ -67,11 +67,11 @@ class FavoritesFragment : Fragment() {
         _binding = null
     }
 
-    private fun render(state: LibraryState) {
+    private fun render(state: FavoritesState) {
         when (state) {
-            is LibraryState.Loading -> showLoading()
-            is LibraryState.Content -> showContent(state)
-            is LibraryState.Empty -> showEmpty()
+            is FavoritesState.Loading -> showLoading()
+            is FavoritesState.Content -> showContent(state)
+            is FavoritesState.Empty -> showEmpty()
         }
     }
 
@@ -81,7 +81,7 @@ class FavoritesFragment : Fragment() {
         binding.alertLayout.visibility = View.GONE
     }
 
-    private fun showContent(state: LibraryState.Content) {
+    private fun showContent(state: FavoritesState.Content) {
         trackListAdapter.trackList = state.trackList
         trackListAdapter.notifyDataSetChanged()
 

@@ -1,6 +1,6 @@
 package com.practicum.playlistmaker.di
 
-import android.media.MediaPlayer
+import com.practicum.playlistmaker.library.ui.CreatePlaylistViewModel
 import com.practicum.playlistmaker.library.ui.FavoritesViewModel
 import com.practicum.playlistmaker.library.ui.PlaylistsViewModel
 import com.practicum.playlistmaker.player.ui.PlayerViewModel
@@ -21,14 +21,18 @@ val viewModelModule = module {
     }
 
     viewModel {
-        PlayerViewModel(MediaPlayer(), get())
+        PlayerViewModel(get(), get())
     }
 
     viewModel {
-        PlaylistsViewModel()
+        PlaylistsViewModel(get())
     }
 
     viewModel {
         FavoritesViewModel(get())
+    }
+
+    viewModel {
+        CreatePlaylistViewModel(androidContext(), get())
     }
 }

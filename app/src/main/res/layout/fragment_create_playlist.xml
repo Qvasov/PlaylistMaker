@@ -1,0 +1,136 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/activityBackgroundColor">
+
+    <LinearLayout
+        android:id="@+id/linearLayout"
+        style="@style/headerLayoutStyle"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent">
+
+        <ImageView
+            android:id="@+id/backButton"
+            android:layout_width="wrap_content"
+            android:layout_height="@dimen/panel_header_height"
+            android:padding="16dp"
+            android:scaleType="centerInside"
+            android:src="@drawable/arrow_back" />
+
+        <TextView
+            style="@style/headerTextStyle"
+            android:layout_marginLeft="@dimen/header_text_margin_horizontal"
+            android:text="@string/new_playlist" />
+    </LinearLayout>
+
+    <ImageView
+        android:id="@+id/addPhotoImageView"
+        android:layout_width="0dp"
+        android:layout_height="0dp"
+        android:layout_marginHorizontal="24dp"
+        android:layout_marginTop="26dp"
+        android:background="@drawable/rounded_dash_border"
+        android:scaleType="centerInside"
+        android:src="@drawable/add_photo"
+        app:layout_constraintDimensionRatio="w,1:1"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/linearLayout"
+        app:layout_constraintWidth_max="312dp" />
+
+    <EditText
+        android:id="@+id/nameEditText"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="32dp"
+        android:background="@drawable/edit_text_new_playlist_background"
+        android:hint="@string/playlist_name"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
+        android:singleLine="true"
+        android:textColor="@color/activityTextColor"
+        android:textColorHint="@color/activityTextColor"
+        android:textCursorDrawable="@drawable/cursor"
+        android:textSize="@dimen/common_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/addPhotoImageView" />
+
+    <TextView
+        android:id="@+id/nameEditTextHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/activityBackgroundColor"
+        android:hint="@string/playlist_name"
+        android:paddingHorizontal="6dp"
+        android:textColor="@color/activityTextColor"
+        android:textColorHint="@color/yp_grey"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/nameEditText"
+        app:layout_constraintStart_toStartOf="@+id/nameEditText"
+        app:layout_constraintTop_toTopOf="@+id/nameEditText" />
+
+    <EditText
+        android:id="@+id/descriptionEditText"
+        android:layout_width="0dp"
+        android:layout_height="56dp"
+        android:layout_marginHorizontal="16dp"
+        android:layout_marginTop="16dp"
+        android:background="@drawable/edit_text_new_playlist_background"
+        android:hint="@string/description"
+        android:inputType="text"
+        android:maxLines="1"
+        android:paddingHorizontal="16dp"
+        android:singleLine="true"
+        android:textColor="@color/activityTextColor"
+        android:textColorHint="@color/activityTextColor"
+        android:textCursorDrawable="@drawable/cursor"
+        android:textSize="@dimen/common_text_size"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="@+id/linearLayout"
+        app:layout_constraintTop_toBottomOf="@+id/nameEditText" />
+
+    <TextView
+        android:id="@+id/descriptionEditTextHint"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="10dp"
+        android:layout_marginTop="32dp"
+        android:background="@color/activityBackgroundColor"
+        android:hint="@string/description"
+        android:paddingHorizontal="6dp"
+        android:textColor="@color/activityTextColor"
+        android:textColorHint="@color/yp_grey"
+        android:textSize="12sp"
+        android:visibility="gone"
+        app:layout_constraintBottom_toTopOf="@+id/descriptionEditText"
+        app:layout_constraintStart_toStartOf="@+id/descriptionEditText"
+        app:layout_constraintTop_toTopOf="@+id/descriptionEditText" />
+
+    <TextView
+        android:id="@+id/createTextView"
+        android:layout_width="0dp"
+        android:layout_height="44dp"
+        android:layout_marginHorizontal="17dp"
+        android:layout_marginBottom="32dp"
+        android:background="@drawable/selector_create_playlist_button_background"
+        android:clickable="true"
+        android:enabled="false"
+        android:gravity="center"
+        android:text="@string/Create"
+        android:textColor="@color/yp_white"
+        android:textSize="@dimen/common_text_size"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent" />
+
+
+</androidx.constraintlayout.widget.ConstraintLayout>

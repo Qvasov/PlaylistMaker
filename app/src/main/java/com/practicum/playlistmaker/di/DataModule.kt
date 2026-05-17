@@ -6,6 +6,7 @@ import androidx.room.Room
 import com.google.gson.Gson
 import com.google.gson.reflect.TypeToken
 import com.practicum.playlistmaker.library.data.db.AppDatabase
+import com.practicum.playlistmaker.library.data.db.converters.PlaylistDbConverter
 import com.practicum.playlistmaker.library.data.db.converters.TrackDbConverter
 import com.practicum.playlistmaker.search.data.NetworkClient
 import com.practicum.playlistmaker.search.data.StorageClient
@@ -67,5 +68,12 @@ val dataModule = module {
 
     factory<TrackHistoryConverter> {
         TrackHistoryConverter()
+    }
+
+    factory<PlaylistDbConverter> {
+        PlaylistDbConverter(
+            get(),
+            object : TypeToken<List<Long>>() {}.type
+        )
     }
 }

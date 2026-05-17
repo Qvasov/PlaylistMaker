@@ -29,6 +29,7 @@
         app:layout_constraintTop_toBottomOf="@+id/backButton"
         app:tabIndicator="@drawable/tab_indicator_fixed"
         app:tabIndicatorColor="@color/tabTextColor"
+        app:tabTextAppearance="@style/tabLayoutTextStyle"
         app:tabTextColor="@color/tabTextColor" />
 
     <androidx.viewpager2.widget.ViewPager2
