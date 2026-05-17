@@ -5,6 +5,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.Toast
+import androidx.activity.addCallback
 import androidx.core.os.bundleOf
 import androidx.fragment.app.Fragment
 import androidx.lifecycle.lifecycleScope
@@ -60,20 +61,24 @@ class PlayerFragment : Fragment() {
         binding.trackName.text = track.trackName
         binding.artistName.text = track.artistName
         binding.playTime.text = START_TIME
-        binding.trackTime.text = track.trackTime
+        binding.trackTime.text = track.getSimpleTrackTime()
         binding.collectionName.text = track.collectionName
         binding.releaseDate.text = track.releaseDate
         binding.primaryGenreName.text = track.primaryGenreName
         binding.country.text = track.country
+        updateLikeButtonState(track.isFavorite)
 
 
         debounce = debounce(lifecycleScope, false) { status ->
             isClickAllowed = status
         }
         playlistSheetAdapter = PlaylistSheetAdapter { playlist ->
-            debounce(true, CLICK_DEBOUNCE_DELAY)
-            viewModel.addToPlaylist(track, playlist)
-            playlistName = playlist.name
+            if (isClickAllowed) {
+                isClickAllowed = false
+                debounce(true, CLICK_DEBOUNCE_DELAY)
+                viewModel.addToPlaylist(track, playlist)
+                playlistName = playlist.name
+            }
         }
         binding.playlistSheetRecyclerView.adapter = playlistSheetAdapter
 
@@ -84,6 +89,7 @@ class PlayerFragment : Fragment() {
             binding.overlay.alpha = alphaOverlay
         }
         bottomSheetBehavior.state = BottomSheetBehavior.STATE_HIDDEN
+
         bottomSheetBehavior.addBottomSheetCallback(object :
             BottomSheetBehavior.BottomSheetCallback() {
             override fun onStateChanged(bottomSheet: View, newState: Int) {
@@ -94,12 +100,15 @@ class PlayerFragment : Fragment() {
             }
 
             override fun onSlide(bottomSheet: View, slideOffset: Float) {
-                binding.overlay.alpha = (slideOffset + 1) / 2
-                alphaOverlay = binding.overlay.alpha
+                if (_binding != null) {
+                    binding.overlay.alpha = (slideOffset + 1) / 2
+                    alphaOverlay = binding.overlay.alpha
+                }
             }
         })
 
 
+        requireActivity().onBackPressedDispatcher.addCallback { findNavController().navigateUp() }
         binding.backButton.setOnClickListener { findNavController().navigateUp() }
         binding.addToPlaylistButton.setOnClickListener {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
@@ -112,7 +121,7 @@ class PlayerFragment : Fragment() {
             findNavController().navigate(R.id.action_playerFragment_to_createPlaylistFragment)
         }
 
-        viewModel.preparePlayer(track.previewUrl, track.isFavorite)
+        viewModel.preparePlayer(track.previewUrl)
 
         viewModel.observeState().observe(viewLifecycleOwner) {
             if (it.mediaPlayerState != null) updateMediaPlayerState(it.mediaPlayerState!!)

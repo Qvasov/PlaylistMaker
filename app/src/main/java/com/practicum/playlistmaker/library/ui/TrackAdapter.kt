@@ -27,6 +27,9 @@ class TrackAdapter(
         holder.itemView.setOnClickListener {
             trackClickListener.onTrackClick(trackList[position])
         }
+        holder.itemView.setOnLongClickListener {
+            trackClickListener.onTrackLongClick(trackList[position])
+        }
     }
 
     override fun getItemCount(): Int {
@@ -51,13 +54,17 @@ class TrackAdapter(
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
             trackViewTextArtisName.text = track.artistName
-            trackViewTextTrackTime.text = track.trackTime
+            trackViewTextTrackTime.text = track.getSimpleTrackTime()
 
 
         }
     }
 
-    fun interface TrackClickListener {
+    interface TrackClickListener {
         fun onTrackClick(track: Track)
+
+        fun onTrackLongClick(track: Track): Boolean {
+            return true
+        }
     }
 }

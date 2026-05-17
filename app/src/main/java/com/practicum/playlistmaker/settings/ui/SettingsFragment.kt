@@ -73,7 +73,7 @@ class SettingsFragment : Fragment() {
     }
 
     companion object {
-        const val COURSE_URL = "https://practicum.yandex.ru"
-        const val USER_AGREEMENT_URL = "https://yandex.ru/legal/practicum_offer/"
+        private const val COURSE_URL = "https://practicum.yandex.ru"
+        private const val USER_AGREEMENT_URL = "https://yandex.ru/legal/practicum_offer/"
     }
 }

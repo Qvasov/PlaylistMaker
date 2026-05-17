@@ -45,7 +45,7 @@
 
                 <TextView
                     style="@style/settingsActivityTextElementStyle"
-                    android:text="@string/share" />
+                    android:text="@string/share_app" />
 
                 <ImageView
                     style="@style/settingsActivityImageElementStyle"

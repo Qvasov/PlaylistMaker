@@ -18,12 +18,20 @@ interface PlaylistDao {
     @Delete
     suspend fun deletePlaylist(playlistEntity: PlaylistEntity)
 
+    @Query("SELECT * FROM playlists WHERE id = :id")
+    fun getPlaylistById(id: Long): Flow<PlaylistEntity>
+
     @Query("SELECT * FROM playlists")
     fun getPlaylists() : Flow<List<PlaylistEntity>>
 
     @Query("SELECT trackIds FROM playlists")
     suspend fun getTrackIdsFromPlayLists() : String
 
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    suspend fun insertPlaylistTrack(playlistTrackEntity: PlaylistTrackEntity)
+
+    @Delete
+    suspend fun deletePlaylistTrack(playlistTrackEntity: PlaylistTrackEntity)
 
     @Transaction
     suspend fun addTrackToPlaylist(playlistTrackEntity: PlaylistTrackEntity, playlistEntity: PlaylistEntity) {
@@ -31,9 +39,12 @@ interface PlaylistDao {
         insertPlaylist(playlistEntity)
     }
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
-    suspend fun insertPlaylistTrack(playlistTrackEntity: PlaylistTrackEntity)
+    @Transaction
+    suspend fun deleteTrackFromPlaylist(playlistTrackEntity: PlaylistTrackEntity, playlistEntity: PlaylistEntity) {
 
-    @Delete
-    suspend fun deletePlaylistTrack(playlistTrackEntity: PlaylistTrackEntity)
+        insertPlaylist(playlistEntity)
+    }
+
+    @Query("SELECT * FROM playlist_track WHERE trackId IN (:trackIdList)")
+    fun getTracksById(trackIdList: List<Long>): Flow<List<PlaylistTrackEntity>>
 }

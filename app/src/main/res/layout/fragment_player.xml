@@ -251,7 +251,7 @@
             android:layout_height="4dp"
             android:layout_gravity="center"
             android:layout_marginTop="8dp"
-            android:background="@color/sheetColor" />
+            android:background="@drawable/sheet_marker_background" />
 
         <TextView
             android:layout_width="match_parent"

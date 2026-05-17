@@ -11,10 +11,11 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.library.domain.model.Playlist
+import com.practicum.playlistmaker.utils.getTrackWord
 
-class PlaylistAdapter(
+class PlaylistsAdapter(
     private val playlistClickListener: PlaylistClickListener
-) : RecyclerView.Adapter<PlaylistAdapter.PlaylistHolder>() {
+) : RecyclerView.Adapter<PlaylistsAdapter.PlaylistHolder>() {
 
     var playlists: List<Playlist> = emptyList()
 
@@ -47,18 +48,6 @@ class PlaylistAdapter(
                 .into(coverViewImage)
             titleViewText.text = playlist.name
             trackCountViewText.text = getTrackWord(playlist.tracksCount)
-        }
-
-        private fun getTrackWord(number: Int): String {
-            val n = Math.abs(number) % 100
-            val n1 = n % 10
-
-            return when {
-                n in 11..19 -> "$number треков"
-                n1 == 1 -> "$number трек"
-                n1 in 2..4 -> "$number трека"
-                else -> "$number треков"
-            }
         }
     }
 

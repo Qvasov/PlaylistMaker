@@ -22,18 +22,18 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentCreatePlaylistBinding
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
-class CreatePlaylistFragment : Fragment() {
+open class CreatePlaylistFragment : Fragment() {
 
     private val viewModel: CreatePlaylistViewModel by viewModel()
 
     private var _binding: FragmentCreatePlaylistBinding? = null
-    private val binding get() = _binding!!
+    protected val binding get() = _binding!!
 
     private var nameTextWatcher: TextWatcher? = null
     private var descriptionTextWatcher: TextWatcher? = null
 
     private lateinit var completeDialog: MaterialAlertDialogBuilder
-    private var imageUri: Uri? = null
+    protected var imageUri: Uri? = null
 
     override fun onCreateView(
         inflater: LayoutInflater,

@@ -5,11 +5,15 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import androidx.fragment.app.Fragment
+import androidx.lifecycle.lifecycleScope
 import androidx.navigation.fragment.findNavController
 import androidx.recyclerview.widget.GridLayoutManager
 import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentPlaylistsBinding
 import com.practicum.playlistmaker.library.domain.PlaylistsState
+import com.practicum.playlistmaker.playlist.ui.PlaylistFragment
+import com.practicum.playlistmaker.utils.debounce
+import kotlinx.coroutines.Job
 import org.koin.androidx.viewmodel.ext.android.viewModel
 
 class PlaylistsFragment : Fragment() {
@@ -18,7 +22,9 @@ class PlaylistsFragment : Fragment() {
 
     private val viewModel: PlaylistsViewModel by viewModel()
 
-    private lateinit var playlistAdapter: PlaylistAdapter
+    private var isClickAllowed = true
+    private lateinit var debounce: (Boolean, Long) -> Job?
+    private lateinit var playlistsAdapter: PlaylistsAdapter
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -36,11 +42,21 @@ class PlaylistsFragment : Fragment() {
         }
 
 
-        playlistAdapter = PlaylistAdapter {
-
+        debounce = debounce(lifecycleScope, false) { status ->
+            isClickAllowed = status
+        }
+        playlistsAdapter = PlaylistsAdapter {
+            if (isClickAllowed) {
+                isClickAllowed = false
+                debounce(true, CLICK_DEBOUNCE_DELAY)
+                findNavController().navigate(
+                    R.id.action_libraryFragment_to_playlistFragment,
+                    PlaylistFragment.createArgs(it.id!!)
+                )
+            }
         }
         binding.playlistRecyclerView.layoutManager = GridLayoutManager(requireContext(), 2)
-        binding.playlistRecyclerView.adapter = playlistAdapter
+        binding.playlistRecyclerView.adapter = playlistsAdapter
 
 
         viewModel.observeState().observe(viewLifecycleOwner) { render(it) }
@@ -68,8 +84,8 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun showContent(state: PlaylistsState.Content) {
-        playlistAdapter.playlists = state.playlists
-        playlistAdapter.notifyDataSetChanged()
+        playlistsAdapter.playlists = state.playlists
+        playlistsAdapter.notifyDataSetChanged()
 
         binding.progressBar.visibility = View.GONE
         binding.playlistRecyclerView.visibility = View.VISIBLE
@@ -78,8 +94,8 @@ class PlaylistsFragment : Fragment() {
     }
 
     private fun showEmpty() {
-        playlistAdapter.playlists = emptyList()
-        playlistAdapter.notifyDataSetChanged()
+        playlistsAdapter.playlists = emptyList()
+        playlistsAdapter.notifyDataSetChanged()
 
         binding.progressBar.visibility = View.GONE
         binding.playlistRecyclerView.visibility = View.GONE
@@ -88,6 +104,8 @@ class PlaylistsFragment : Fragment() {
     }
 
     companion object {
+        private const val CLICK_DEBOUNCE_DELAY = 1000L
+
         fun newInstance() = PlaylistsFragment()
     }
 }

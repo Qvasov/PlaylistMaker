@@ -3,15 +3,13 @@
     <item
         android:width="100dp"
         android:height="100dp">
-        <shape android:shape="rectangle">
-            <solid android:color="@color/activityBackgroundColor" />
-        </shape>
+        <shape android:shape="rectangle"/>
     </item>
 
     <item
         android:width="72dp"
         android:height="72dp"
-        android:gravity="center"
-        android:drawable="@drawable/album_place_holder" />
+        android:drawable="@drawable/album_place_holder"
+        android:gravity="center" />
 
 </layer-list>

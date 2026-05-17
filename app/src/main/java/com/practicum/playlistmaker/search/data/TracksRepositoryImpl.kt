@@ -26,7 +26,7 @@ class TracksRepositoryImpl(
                         it.trackId,
                         it.trackName.trim(),
                         it.artistName.trim(),
-                        it.getSimpleTrackTime(),
+                        it.trackTime,
                         it.getCoverArtwork(),
                         it.collectionName.trim(),
                         it.getReleaseYear(),
@@ -64,8 +64,8 @@ class TracksRepositoryImpl(
         val favoritesTracks = appDatabase.trackDao().getTrackIds()
         emit(storageClient.getData()
             ?.map {
-                val track = trackHistoryConverter.mapToTrack(it)
-                track.isFavorite = favoritesTracks.contains(track.trackId)
+                val isFavorite = favoritesTracks.contains(it.trackId)
+                val track = trackHistoryConverter.mapToTrack(it, isFavorite)
                 track
             }
             ?.reversed()
