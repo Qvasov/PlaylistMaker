@@ -14,7 +14,7 @@ import kotlinx.coroutines.launch
 import java.io.File
 import java.io.FileOutputStream
 
-class CreatePlaylistViewModel(
+open class CreatePlaylistViewModel(
     private val context: Context,
     private val playlistsInteractor: PlaylistsInteractor
 ) : ViewModel() {
@@ -38,7 +38,7 @@ class CreatePlaylistViewModel(
 
     }
 
-    private fun saveImageToPrivateStorage(playlistName: String, imageUri: Uri): Uri {
+    protected fun saveImageToPrivateStorage(playlistName: String, imageUri: Uri): Uri {
         val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), ALBUM_NAME)
         if (!filePath.exists()) {
             filePath.mkdirs()
@@ -50,6 +50,17 @@ class CreatePlaylistViewModel(
             .decodeStream(inputStream)
             .compress(Bitmap.CompressFormat.JPEG, 30, outputStream)
         return file.toUri()
+    }
+
+    protected fun deleteImageToPrivateStorage(playlistName: String) {
+        val filePath = File(context.getExternalFilesDir(Environment.DIRECTORY_PICTURES), ALBUM_NAME)
+        if (!filePath.exists()) {
+            return
+        }
+        val file = File(filePath, "$playlistName$_COVER.jpg")
+        if (file.exists()) {
+            file.delete()
+        }
     }
 
     companion object {

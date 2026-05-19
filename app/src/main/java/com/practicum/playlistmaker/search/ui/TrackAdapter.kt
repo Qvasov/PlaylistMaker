@@ -52,7 +52,7 @@ class TrackAdapter(
                 .into(trackViewImage)
             trackViewTextTrackName.text = track.trackName
             trackViewTextArtisName.text = track.artistName
-            trackViewTextTrackTime.text = track.trackTime
+            trackViewTextTrackTime.text = track.getSimpleTrackTime()
 
 
         }

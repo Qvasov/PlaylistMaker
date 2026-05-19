@@ -12,6 +12,7 @@ import com.practicum.playlistmaker.R
 import com.practicum.playlistmaker.databinding.FragmentFavoriteBinding
 import com.practicum.playlistmaker.library.domain.FavoritesState
 import com.practicum.playlistmaker.player.ui.PlayerFragment
+import com.practicum.playlistmaker.search.domain.models.Track
 import com.practicum.playlistmaker.utils.debounce
 import kotlinx.coroutines.Job
 import org.koin.android.ext.android.inject
@@ -42,16 +43,19 @@ class FavoritesFragment : Fragment() {
         changeTrackClickStatusOn = debounce(lifecycleScope, false) { status ->
             isClickAllowed = status
         }
-        trackListAdapter = TrackAdapter {
-            if (isClickAllowed) {
-                isClickAllowed = false
-                findNavController().navigate(
-                    R.id.action_libraryFragment_to_playerFragment,
-                    PlayerFragment.createArgs(gson.toJson(it))
-                )
-                changeTrackClickStatusOn(true, CLICK_DEBOUNCE_DELAY)
+        trackListAdapter = TrackAdapter(object : TrackAdapter.TrackClickListener {
+            override fun onTrackClick(track: Track) {
+                if (isClickAllowed) {
+                    isClickAllowed = false
+                    findNavController().navigate(
+                        R.id.action_libraryFragment_to_playerFragment,
+                        PlayerFragment.createArgs(gson.toJson(track))
+                    )
+                    changeTrackClickStatusOn(true, CLICK_DEBOUNCE_DELAY)
+                }
             }
-        }
+
+        })
         binding.favoriteTrackListView.adapter = trackListAdapter
 
         viewModel.observeState().observe(viewLifecycleOwner) {

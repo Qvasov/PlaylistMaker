@@ -51,14 +51,17 @@
                 <TextView
                     android:id="@+id/trackViewTextArtisName"
                     style="@style/trackViewTextStyle"
+                    android:layout_width="0dp"
                     android:ellipsize="end"
                     android:lines="1"
                     app:layout_constraintBottom_toBottomOf="parent"
                     app:layout_constraintEnd_toStartOf="@+id/trackViewTextSeparator"
+                    app:layout_constraintHorizontal_bias="0"
+                    app:layout_constraintHorizontal_chainStyle="packed"
                     app:layout_constraintStart_toStartOf="parent"
                     app:layout_constraintTop_toTopOf="parent"
-                    app:layout_constraintWidth="wrap_content"
-                    tools:text="Artist nameArtist nameArtist nameArtist nameArtist nameArtist nameArtist name" />
+                    app:layout_constraintWidth_default="wrap"
+                    tools:text="Artist name" />
 
                 <ImageView
                     android:id="@+id/trackViewTextSeparator"
@@ -76,6 +79,7 @@
                     android:id="@+id/trackViewTextTrackTime"
                     style="@style/trackViewTextStyle"
                     app:layout_constraintBottom_toBottomOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
                     app:layout_constraintStart_toEndOf="@+id/trackViewTextSeparator"
                     app:layout_constraintTop_toTopOf="parent"
                     tools:text="0:00" />

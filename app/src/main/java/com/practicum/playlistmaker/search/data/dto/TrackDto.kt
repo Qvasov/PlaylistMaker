@@ -2,12 +2,10 @@ package com.practicum.playlistmaker.search.data.dto
 
 import android.util.Log
 import com.google.gson.annotations.SerializedName
-import java.text.SimpleDateFormat
 import java.time.DateTimeException
 import java.time.Instant
 import java.time.LocalDateTime
 import java.time.ZoneId
-import java.util.Locale
 
 data class TrackDto(
     val trackId: Long,
@@ -22,9 +20,6 @@ data class TrackDto(
     val country: String,
     val previewUrl: String
 ) {
-    fun getSimpleTrackTime() =
-        SimpleDateFormat("mm:ss", Locale.getDefault()).format(trackTime).toString()
-
     fun getCoverArtwork() = artworkUrl100.replaceAfterLast('/', "512x512bb.jpg")
 
     fun getReleaseYear(): String {

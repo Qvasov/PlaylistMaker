@@ -19,7 +19,7 @@ class TrackHistoryConverter {
         )
     }
 
-    fun mapToTrack(trackHistoryDto: TrackHistoryDto): Track {
+    fun mapToTrack(trackHistoryDto: TrackHistoryDto, isFavorite: Boolean): Track {
         return Track(
             trackHistoryDto.trackId,
             trackHistoryDto.trackName,
@@ -31,6 +31,7 @@ class TrackHistoryConverter {
             trackHistoryDto.primaryGenreName,
             trackHistoryDto.country,
             trackHistoryDto.previewUrl,
+            isFavorite
         )
     }
 }

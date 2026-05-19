@@ -51,7 +51,7 @@ class PlaylistDbConverter(
         )
     }
 
-    fun toPlaylistTrack(entity: PlaylistTrackEntity): Track {
+    fun toPlaylistTrack(entity: PlaylistTrackEntity, isFavorite: Boolean): Track {
         return Track(
             trackId = entity.trackId,
             artworkUrl100 = entity.artworkUrl100,
@@ -63,7 +63,7 @@ class PlaylistDbConverter(
             trackTime = entity.trackTime,
             primaryGenreName = entity.primaryGenreName,
             previewUrl = entity.previewUrl,
-            isFavorite = true
+            isFavorite = isFavorite
         )
     }
 }

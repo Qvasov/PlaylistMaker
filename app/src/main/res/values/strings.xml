@@ -4,7 +4,7 @@
     <string name="search">Поиск</string>
     <string name="library">Медиатека</string>
     <string name="settings">Настройки</string>
-    <string name="share">Поделиться приложением</string>
+    <string name="share_app">Поделиться приложением</string>
     <string name="night">Темная тема</string>
     <string name="support">Написать в поддержку</string>
     <string name="user_agreement">Пользовательское соглашение</string>
@@ -74,5 +74,10 @@
     <string name="playlist_name">Название*</string>
     <string name="Create">Создать</string>
     <string name="AddToPlaylist">Добавить в плейлист</string>
+    <string name="share">Поделиться</string>
+    <string name="editInfo">Редактировать информацию</string>
+    <string name="deletePlaylist">Удалить плейлист</string>
+    <string name="edit">Редактировать</string>
+    <string name="save">Сохранить</string>
 
 </resources>

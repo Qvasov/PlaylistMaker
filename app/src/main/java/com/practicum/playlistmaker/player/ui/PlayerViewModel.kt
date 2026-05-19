@@ -46,13 +46,13 @@ class PlayerViewModel(
         stateLiveData.postValue(PlayerState(mediaPlayerState))
     }
 
-    fun preparePlayer(previewUrl: String, isFavorite: Boolean) {
+    fun preparePlayer(previewUrl: String) {
         mediaPlayer = MediaPlayer()
         mediaPlayer.setDataSource(previewUrl)
         mediaPlayer.prepareAsync()
         mediaPlayerState = MediaPlayerState.PREPARED
         mediaPlayer.setOnPreparedListener {
-            stateLiveData.postValue(PlayerState(mediaPlayerState, START_TIME, isFavorite))
+            stateLiveData.postValue(PlayerState(mediaPlayerState, START_TIME))
         }
 
         mediaPlayer.setOnCompletionListener {

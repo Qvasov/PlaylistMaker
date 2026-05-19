@@ -31,6 +31,8 @@
             android:id="@+id/sheetPlaylistTitle"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
             android:textColor="@color/activityTextColor"
             android:textSize="@dimen/common_text_size"
             tools:text="Playlist name" />
@@ -39,6 +41,8 @@
             android:id="@+id/sheetPlaylistTracksCount"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:ellipsize="end"
+            android:lines="1"
             android:textColor="@color/trackViewTextColor"
             android:textSize="11sp"
             tools:text="Track count" />
