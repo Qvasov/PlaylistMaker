@@ -25,7 +25,7 @@ class PlayerViewModel(
 ) : ViewModel() {
 
     private lateinit var mediaPlayer: MediaPlayer
-    private var mediaPlayerState: MediaPlayerState? = null
+    private var mediaPlayerState: MediaPlayerState = MediaPlayerState.DEFAULT
     private var timerJob: Job? = null
     private val dateFormat by lazy { SimpleDateFormat("mm:ss", Locale.getDefault()) }
 
@@ -80,6 +80,7 @@ class PlayerViewModel(
         when (mediaPlayerState) {
             MediaPlayerState.PLAYING -> pausePlayer()
             MediaPlayerState.PREPARED, MediaPlayerState.PAUSED -> startPlayer()
+            MediaPlayerState.DEFAULT -> stateLiveData.postValue(PlayerState(mediaPlayerState))
             else -> {}
         }
     }

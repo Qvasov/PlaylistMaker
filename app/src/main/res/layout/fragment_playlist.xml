@@ -19,7 +19,8 @@
             android:scaleType="centerInside"
             android:src="@drawable/arrow_back"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:tint="@color/yp_black" />
 
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/mainLeftBorder"
@@ -211,6 +212,17 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
+
+        <TextView
+            android:id="@+id/sheetAlert"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center"
+            android:layout_marginTop="25dp"
+            android:text="@string/emptyPlaylistMessage"
+            android:textFontWeight="400"
+            android:textSize="@dimen/common_text_size"
+            android:visibility="gone" />
 
         <androidx.recyclerview.widget.RecyclerView
             android:id="@+id/playlistSheetRecyclerView"
