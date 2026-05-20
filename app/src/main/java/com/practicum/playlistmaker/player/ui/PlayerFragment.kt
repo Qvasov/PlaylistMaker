@@ -114,7 +114,9 @@ class PlayerFragment : Fragment() {
             bottomSheetBehavior.state = BottomSheetBehavior.STATE_COLLAPSED
             viewModel.uploadPlaylist()
         }
-        binding.playPauseButton.setOnClickListener { viewModel.playbackControl() }
+        binding.playPauseButton.setOnClickListener {
+            viewModel.playbackControl()
+        }
         binding.likeButton.setOnClickListener { viewModel.onLikeClicked(track) }
 
         binding.newPlaylistButton.setOnClickListener {
@@ -157,20 +159,20 @@ class PlayerFragment : Fragment() {
         when (mediaPlayerState) {
             MediaPlayerState.PREPARED -> {
                 binding.playPauseButton.isEnabled = true
-                binding.playPauseButton.setImageResource(R.drawable.play_button)
+                binding.playPauseButton.updateButtonImage(true)
             }
 
             MediaPlayerState.PLAYING -> {
-                binding.playPauseButton.setImageResource(R.drawable.pause_button)
+                binding.playPauseButton.updateButtonImage(false)
             }
 
             MediaPlayerState.PAUSED -> {
-                binding.playPauseButton.setImageResource(R.drawable.play_button)
+                binding.playPauseButton.updateButtonImage(true)
             }
 
             MediaPlayerState.DEFAULT -> {
                 binding.playPauseButton.isEnabled = false
-                binding.playPauseButton.setImageResource(0)
+                binding.playPauseButton.updateButtonImage(true)
             }
         }
     }

@@ -221,7 +221,8 @@ class PlaylistFragment : Fragment() {
     }
 
     private fun showSheetLoading() {
-        binding.progressBarSheet.visibility = View.GONE
+        binding.progressBarSheet.visibility = View.VISIBLE
+        binding.sheetAlert.visibility = View.GONE
         binding.playlistSheetRecyclerView.visibility = View.GONE
     }
 
@@ -232,6 +233,7 @@ class PlaylistFragment : Fragment() {
         binding.playlistTime.text = getMinutesWord(state.getTrackListTime().toInt())
         binding.trackCount.text = getTrackWord(state.trackList.size)
         binding.progressBarSheet.visibility = View.GONE
+        binding.sheetAlert.visibility = View.GONE
         binding.playlistSheetRecyclerView.visibility = View.VISIBLE
     }
 
@@ -242,6 +244,7 @@ class PlaylistFragment : Fragment() {
         binding.playlistTime.text = getMinutesWord(0)
         binding.trackCount.text = getTrackWord(0)
         binding.progressBarSheet.visibility = View.GONE
+        binding.sheetAlert.visibility = View.VISIBLE
         binding.playlistSheetRecyclerView.visibility = View.GONE
     }
 

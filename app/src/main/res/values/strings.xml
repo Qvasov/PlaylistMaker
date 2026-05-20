@@ -79,5 +79,6 @@
     <string name="deletePlaylist">Удалить плейлист</string>
     <string name="edit">Редактировать</string>
     <string name="save">Сохранить</string>
+    <string name="emptyPlaylistMessage">Плейлист пуст</string>
 
 </resources>
